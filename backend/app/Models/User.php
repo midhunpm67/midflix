@@ -10,10 +10,11 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Model implements AuthenticatableContract, CanResetPassword
 {
-    use HasApiTokens, HasRoles, Authenticatable, CanResetPasswordTrait, Notifiable;
+    use HasApiTokens, HasRoles, Authenticatable, CanResetPasswordTrait, Notifiable, HasFactory;
 
     protected $connection = 'mongodb';
     protected $collection = 'users';

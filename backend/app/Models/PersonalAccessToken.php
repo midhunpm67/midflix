@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
-use Laravel\Sanctum\Contracts\HasAbilities;
-use MongoDB\Laravel\Eloquent\Model;
+use Laravel\Sanctum\PersonalAccessToken as SanctumPersonalAccessToken;
+use MongoDB\Laravel\Eloquent\DocumentModel;
 
-class PersonalAccessToken extends Model implements HasAbilities
+class PersonalAccessToken extends SanctumPersonalAccessToken
 {
+    use DocumentModel;
+
     protected $connection = 'mongodb';
     protected $collection = 'personal_access_tokens';
 
@@ -25,29 +27,4 @@ class PersonalAccessToken extends Model implements HasAbilities
         'last_used_at' => 'datetime',
         'expires_at' => 'datetime',
     ];
-
-    /**
-     * Determine if the token has a given ability.
-     */
-    public function can($ability): bool
-    {
-        return in_array('*', $this->abilities ?? [])
-            || in_array($ability, $this->abilities ?? []);
-    }
-
-    /**
-     * Determine if the token is missing a given ability.
-     */
-    public function cant($ability): bool
-    {
-        return ! $this->can($ability);
-    }
-
-    /**
-     * Get the tokenable model that the access token belongs to.
-     */
-    public function tokenable()
-    {
-        return $this->morphTo('tokenable');
-    }
 }
