@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: midflix_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./backend:/var/www/html
+    networks:
+      - midflix
+    depends_on:
+      - mongodb
+      - redis
+
+  nginx:
+    image: nginx:alpine
+    container_name: midflix_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - midflix
+    depends_on:
+      - app
+
+  mongodb:
+    image: mongo:7
+    container_name: midflix_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - midflix
+
+  redis:
+    image: redis:7-alpine
+    container_name: midflix_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - midflix
+
+  horizon:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: midflix_horizon
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: php artisan horizon
+    volumes:
+      - ./backend:/var/www/html
+    networks:
+      - midflix
+    depends_on:
+      - mongodb
+      - redis
+
+networks:
+  midflix:
+    driver: bridge
+
+volumes:
+  mongodb_data:
