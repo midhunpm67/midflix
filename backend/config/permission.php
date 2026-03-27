@@ -6,6 +6,8 @@ use Spatie\Permission\Models\Role;
 
 return [
 
+    'connection' => env('DB_CONNECTION', 'mongodb'),
+
     'models' => [
 
         /*
