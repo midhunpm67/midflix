@@ -1,5 +1,3 @@
-function App() {
-  return <div className="bg-background min-h-screen text-white">MidFlix</div>
+export function App() {
+  return null
 }
-
-export default App
