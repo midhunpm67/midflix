@@ -61,12 +61,13 @@ class UserFactory extends Factory
     }
 
     /**
-     * Admin user state.
+     * Admin user state — use a unique email to avoid collision in tests.
+     * Role assignment is handled by the RoleSeeder or test setup.
      */
     public function admin(): static
     {
         return $this->state(fn () => [
-            'email' => 'admin@midflix.com',
+            'email' => 'admin-' . fake()->unique()->randomNumber(5) . '@midflix.com',
         ]);
     }
 }

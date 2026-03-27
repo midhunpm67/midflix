@@ -46,11 +46,23 @@ class User extends Model implements AuthenticatableContract, CanResetPassword
     ];
 
     /**
-     * Check if the user has an active subscription (trial or paid).
+     * Check if the user has an active subscription (trial or paid) that has not expired.
      */
     public function hasActiveSubscription(): bool
     {
-        $subscription = $this->subscription;
-        return in_array($subscription['status'] ?? 'expired', ['trial', 'active']);
+        $subscription = $this->subscription ?? [];
+        $status = $subscription['status'] ?? 'expired';
+
+        if ($status === 'active') {
+            $expiresAt = $subscription['expires_at'] ?? null;
+            return $expiresAt === null || now()->lt(\Carbon\Carbon::parse($expiresAt));
+        }
+
+        if ($status === 'trial') {
+            $trialEndsAt = $subscription['trial_ends_at'] ?? null;
+            return $trialEndsAt !== null && now()->lt(\Carbon\Carbon::parse($trialEndsAt));
+        }
+
+        return false;
     }
 }
