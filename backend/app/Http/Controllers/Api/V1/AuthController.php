@@ -49,7 +49,10 @@ class AuthController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        $accessToken = $request->user()->currentAccessToken();
+        if ($accessToken) {
+            $accessToken->delete();
+        }
 
         return response()->json([
             'success' => true,
