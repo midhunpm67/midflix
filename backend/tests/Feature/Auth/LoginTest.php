@@ -14,7 +14,7 @@ beforeEach(function () {
     $mongodb->selectCollection('model_has_permissions')->deleteMany([]);
     $mongodb->selectCollection('role_has_permissions')->deleteMany([]);
     // Re-seed the subscriber role needed for login tests
-    Role::firstOrCreate(['name' => 'subscriber', 'guard_name' => 'web']);
+    Role::firstOrCreate(['name' => 'subscriber', 'guard_name' => 'sanctum']);
 });
 
 test('user can login with correct credentials', function () {
@@ -41,7 +41,8 @@ test('login fails with wrong password', function () {
         'password' => 'wrongpassword',
     ]);
 
-    $response->assertStatus(422);
+    $response->assertStatus(422)
+        ->assertJson(['success' => false]);
 });
 
 test('login fails with non-existent email', function () {
@@ -55,11 +56,15 @@ test('login fails with non-existent email', function () {
 
 test('authenticated user can logout', function () {
     $user = User::factory()->create();
+    $token = $user->createToken('test')->plainTextToken;
 
-    $response = $this->actingAs($user, 'sanctum')
-        ->postJson('/api/v1/auth/logout');
+    $this->withHeader('Authorization', "Bearer $token")
+        ->postJson('/api/v1/auth/logout')
+        ->assertStatus(200)
+        ->assertJson(['success' => true]);
 
-    $response->assertStatus(200)->assertJson(['success' => true]);
+    // Token must be deleted from the database
+    expect(PersonalAccessToken::count())->toBe(0);
 });
 
 test('logout requires authentication', function () {

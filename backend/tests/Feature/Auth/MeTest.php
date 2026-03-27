@@ -14,7 +14,7 @@ beforeEach(function () {
     $mongodb->selectCollection('model_has_permissions')->deleteMany([]);
     $mongodb->selectCollection('role_has_permissions')->deleteMany([]);
     // Re-seed the subscriber role needed for me tests
-    Role::firstOrCreate(['name' => 'subscriber', 'guard_name' => 'web']);
+    Role::firstOrCreate(['name' => 'subscriber', 'guard_name' => 'sanctum']);
 });
 
 test('authenticated user can get their profile', function () {
@@ -46,5 +46,6 @@ test('me returns correct user data', function () {
 
     $response->assertStatus(200)
         ->assertJsonPath('data.name', 'John Smith')
-        ->assertJsonPath('data.email', 'john@example.com');
+        ->assertJsonPath('data.email', 'john@example.com')
+        ->assertJsonPath('data.role', 'subscriber');
 });

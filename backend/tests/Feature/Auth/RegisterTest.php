@@ -13,7 +13,7 @@ beforeEach(function () {
     $mongodb->selectCollection('model_has_permissions')->deleteMany([]);
     $mongodb->selectCollection('role_has_permissions')->deleteMany([]);
     // Re-seed the subscriber role needed for register tests
-    \App\Models\Role::firstOrCreate(['name' => 'subscriber', 'guard_name' => 'web']);
+    \App\Models\Role::firstOrCreate(['name' => 'subscriber', 'guard_name' => 'sanctum']);
 });
 
 test('user can register with valid data', function () {
