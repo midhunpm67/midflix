@@ -28,3 +28,28 @@ body::after {
     transition-duration: 0.01ms !important;
   }
 }
+
+@layer base {
+  :root {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 197 96% 46%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 207 27% 45%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 21%;
+    --muted-foreground: 0 0% 53%;
+    --accent: 0 0% 21%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 21%;
+    --input: 0 0% 21%;
+    --ring: 197 96% 46%;
+    --radius: 0.5rem;
+  }
+}
