@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Stand up the full-stack foundation — Laravel 11 API with MongoDB auth, React 18 SPA scaffold, role-based protected routing, and GitHub Actions CI.
+**Goal:** Stand up the full-stack foundation — Laravel 12 API with MongoDB auth, React 18 SPA scaffold, role-based protected routing, and GitHub Actions CI.
 
-**Architecture:** Laravel 11 REST API backed by local MongoDB + Redis, Sanctum token auth stored in localStorage, Spatie RBAC with `admin` and `subscriber` roles. React 18 SPA with Zustand auth state, TanStack Query, React Router v6 protected routes. Docker Compose orchestrates all services locally.
+**Architecture:** Laravel 12 REST API backed by local MongoDB + Redis, Sanctum token auth stored in localStorage, Spatie RBAC with `admin` and `subscriber` roles. React 18 SPA with Zustand auth state, TanStack Query, React Router v6 protected routes. Docker Compose orchestrates all services locally.
 
-**Tech Stack:** Laravel 11, PHP 8.3, MongoDB 7, Redis 7, Laravel Sanctum, Spatie Permission, Laravel Horizon, Pest, React 18, Vite, TypeScript strict, Tailwind CSS v3, Shadcn/ui, Zustand, TanStack Query v5, React Router v6, React Hook Form, Zod, Vitest
+**Tech Stack:** Laravel 12, PHP 8.3, MongoDB 7, Redis 7, Laravel Sanctum, Spatie Permission, Laravel Horizon, Pest, React 18, Vite, TypeScript strict, Tailwind CSS v3, Shadcn/ui, Zustand, TanStack Query v5, React Router v6, React Hook Form, Zod, Vitest
 
 ---
 
@@ -237,14 +237,14 @@ git commit -m "feat: add Docker Compose setup with MongoDB, Redis, Nginx, Horizo
 
 ---
 
-## Task 2: Laravel 11 Installation + MongoDB + Redis Configuration
+## Task 2: Laravel 12 Installation + MongoDB + Redis Configuration
 
 **Files:**
 - Create: `backend/` (Laravel install)
 - Modify: `backend/config/database.php`
 - Modify: `backend/.env.example`
 
-- [ ] **Step 1: Install Laravel 11 in `backend/`**
+- [ ] **Step 1: Install Laravel 12 in `backend/`**
 
 ```bash
 composer create-project laravel/laravel backend --prefer-dist
@@ -383,7 +383,7 @@ Expected: all 5 containers `running`.
 
 ```bash
 git add backend/
-git commit -m "feat: install Laravel 11 with MongoDB, Sanctum, Spatie Permission, Horizon"
+git commit -m "feat: install Laravel 12 with MongoDB, Sanctum, Spatie Permission, Horizon"
 ```
 
 ---
@@ -2581,7 +2581,7 @@ Check the Actions tab in GitHub. Expected: both `Laravel Tests` and `React Build
 
 At this point the following are working:
 - Docker Compose: app, nginx, MongoDB, Redis, Horizon all running
-- Laravel 11 API: register, login, logout, me endpoints — all Pest tests passing
+- Laravel 12 API: register, login, logout, me endpoints — all Pest tests passing
 - Spatie roles seeded: `admin` + `subscriber`, default admin user created
 - React 18 SPA: routing, auth store, login/register pages fully functional
 - Protected routes enforce subscriber and admin access
