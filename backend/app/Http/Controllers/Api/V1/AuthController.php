@@ -20,21 +20,29 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $result,
+            'data' => [
+                'user' => new UserResource($result['user']),
+                'token' => $result['token'],
+            ],
             'message' => 'Account created successfully',
         ], 201);
     }
 
     public function login(LoginRequest $request): JsonResponse
     {
+        $validated = $request->validated();
+
         $result = $this->authService->login(
-            $request->email,
-            $request->password
+            $validated['email'],
+            $validated['password']
         );
 
         return response()->json([
             'success' => true,
-            'data' => $result,
+            'data' => [
+                'user' => new UserResource($result['user']),
+                'token' => $result['token'],
+            ],
             'message' => 'Login successful',
         ]);
     }

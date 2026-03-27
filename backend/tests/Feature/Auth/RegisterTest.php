@@ -5,6 +5,14 @@ use App\Models\User;
 beforeEach(function () {
     \App\Models\User::truncate();
     \App\Models\PersonalAccessToken::truncate();
+    \App\Models\Role::truncate();
+    \App\Models\Permission::truncate();
+    // Truncate pivot collections using direct MongoDB connection
+    $mongodb = \DB::connection('mongodb')->getMongoDB();
+    $mongodb->selectCollection('model_has_roles')->deleteMany([]);
+    $mongodb->selectCollection('model_has_permissions')->deleteMany([]);
+    $mongodb->selectCollection('role_has_permissions')->deleteMany([]);
+    // Re-seed the subscriber role needed for register tests
     \App\Models\Role::firstOrCreate(['name' => 'subscriber', 'guard_name' => 'web']);
 });
 

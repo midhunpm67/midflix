@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -17,7 +16,7 @@ class AuthService
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => $data['password'],
+            'password' => Hash::make($data['password']),
         ]);
 
         $user->assignRole('subscriber');
@@ -25,7 +24,7 @@ class AuthService
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return [
-            'user' => new UserResource($user),
+            'user' => $user,
             'token' => $token,
         ];
     }
@@ -48,7 +47,7 @@ class AuthService
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return [
-            'user' => new UserResource($user),
+            'user' => $user,
             'token' => $token,
         ];
     }
