@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { toast } from 'sonner';
 import {
   adminCreateEpisode,
   adminUpdateEpisode,
@@ -49,7 +50,9 @@ export default function EpisodeList({ seasonId, episodes }: EpisodeListProps) {
     onSuccess: () => {
       invalidate();
       setShowAdd(false);
+      toast.success('Episode created');
     },
+    onError: () => toast.error('Failed to create episode'),
   });
 
   const updateMutation = useMutation({
@@ -64,12 +67,18 @@ export default function EpisodeList({ seasonId, episodes }: EpisodeListProps) {
     onSuccess: () => {
       invalidate();
       setEditingId(null);
+      toast.success('Episode updated');
     },
+    onError: () => toast.error('Failed to update episode'),
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => adminDeleteEpisode(id),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      toast.success('Episode deleted');
+    },
+    onError: () => toast.error('Failed to delete episode'),
   });
 
   return (

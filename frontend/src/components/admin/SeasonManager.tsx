@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { toast } from 'sonner';
 import EpisodeList from './EpisodeList';
 import {
   adminCreateSeason,
@@ -44,7 +45,9 @@ export default function SeasonManager({ contentId }: SeasonManagerProps) {
     onSuccess: () => {
       invalidate();
       setShowAdd(false);
+      toast.success('Season created');
     },
+    onError: () => toast.error('Failed to create season'),
   });
 
   const updateMutation = useMutation({
@@ -53,12 +56,18 @@ export default function SeasonManager({ contentId }: SeasonManagerProps) {
     onSuccess: () => {
       invalidate();
       setEditingId(null);
+      toast.success('Season updated');
     },
+    onError: () => toast.error('Failed to update season'),
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => adminDeleteSeason(id),
-    onSuccess: invalidate,
+    onSuccess: () => {
+      invalidate();
+      toast.success('Season deleted');
+    },
+    onError: () => toast.error('Failed to delete season'),
   });
 
   if (isLoading) return <div className="text-sm text-muted-foreground">Loading seasons…</div>;

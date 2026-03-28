@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import ContentForm from '@/components/admin/ContentForm';
 import SeasonManager from '@/components/admin/SeasonManager';
 import {
@@ -25,7 +26,11 @@ export default function ContentEditPage() {
     mutationFn: (payload: CreateContentPayload) => adminCreateContent(payload),
     onSuccess: (created) => {
       queryClient.invalidateQueries({ queryKey: ['admin-content'] });
+      toast.success('Content created successfully');
       navigate(`/admin/content/${created.id}`);
+    },
+    onError: () => {
+      toast.error('Failed to create content');
     },
   });
 
@@ -34,6 +39,10 @@ export default function ContentEditPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-content'] });
       queryClient.invalidateQueries({ queryKey: ['admin-content-detail', id] });
+      toast.success('Content updated successfully');
+    },
+    onError: () => {
+      toast.error('Failed to update content');
     },
   });
 
@@ -78,20 +87,6 @@ export default function ContentEditPage() {
           </p>
         </div>
       </div>
-
-      {/* Error */}
-      {(createMutation.error || updateMutation.error) && (
-        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
-          Failed to save. Please try again.
-        </div>
-      )}
-
-      {/* Success feedback */}
-      {updateMutation.isSuccess && (
-        <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 text-sm">
-          Content updated successfully.
-        </div>
-      )}
 
       {/* Form */}
       {(isNew || content) && (

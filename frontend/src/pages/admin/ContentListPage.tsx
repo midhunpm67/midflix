@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import {
   adminListContent,
   adminTogglePublish,
@@ -20,12 +21,24 @@ export default function ContentListPage() {
 
   const togglePublishMutation = useMutation({
     mutationFn: (id: string) => adminTogglePublish(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-content'] }),
+    onSuccess: (updated) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-content'] });
+      toast.success(updated.is_published ? 'Content published' : 'Content unpublished');
+    },
+    onError: () => {
+      toast.error('Failed to update publish status');
+    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => adminDeleteContent(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['admin-content'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-content'] });
+      toast.success('Content deleted');
+    },
+    onError: () => {
+      toast.error('Failed to delete content');
+    },
   });
 
   function handleDelete(item: ContentListItem) {
