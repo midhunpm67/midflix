@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   adminListContent,
@@ -9,7 +9,6 @@ import {
 import type { ContentListItem } from '@/types/content';
 
 export default function ContentListPage() {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -75,54 +74,64 @@ export default function ContentListPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {data.items.map((item) => (
-                  <tr key={item.id} className="bg-background hover:bg-card/50 transition-colors">
-                    <td className="px-4 py-3 text-white font-medium">
-                      <button
-                        onClick={() => navigate(`/admin/content/${item.id}`)}
-                        className="hover:text-primary transition-colors text-left"
-                      >
-                        {item.title}
-                      </button>
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground capitalize">{item.type}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{item.year ?? '—'}</td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                          item.is_published
-                            ? 'bg-green-900/40 text-green-400'
-                            : 'bg-yellow-900/40 text-yellow-400'
-                        }`}
-                      >
-                        {item.is_published ? 'Published' : 'Draft'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">{item.view_count.toLocaleString()}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => navigate(`/admin/content/${item.id}`)}
-                          className="text-xs text-primary hover:underline"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => togglePublishMutation.mutate(item.id)}
-                          className="text-xs text-muted-foreground hover:text-white transition-colors"
-                        >
-                          {item.is_published ? 'Unpublish' : 'Publish'}
-                        </button>
-                        <button
-                          onClick={() => handleDelete(item)}
-                          className="text-xs text-destructive hover:underline"
-                        >
-                          Delete
-                        </button>
-                      </div>
+                {data.items.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground text-sm">
+                      No content found.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  data.items.map((item) => (
+                    <tr key={item.id} className="bg-background hover:bg-card/50 transition-colors">
+                      <td className="px-4 py-3 text-white font-medium">
+                        <Link
+                          to={`/admin/content/${item.id}`}
+                          className="hover:text-primary transition-colors"
+                        >
+                          {item.title}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground capitalize">{item.type}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{item.year ?? '—'}</td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                            item.is_published
+                              ? 'bg-green-900/40 text-green-400'
+                              : 'bg-yellow-900/40 text-yellow-400'
+                          }`}
+                        >
+                          {item.is_published ? 'Published' : 'Draft'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground">{item.view_count.toLocaleString()}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <Link
+                            to={`/admin/content/${item.id}`}
+                            className="text-xs text-primary hover:underline"
+                          >
+                            Edit
+                          </Link>
+                          <button
+                            onClick={() => togglePublishMutation.mutate(item.id)}
+                            disabled={togglePublishMutation.isPending || deleteMutation.isPending}
+                            className="text-xs text-muted-foreground hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            {item.is_published ? 'Unpublish' : 'Publish'}
+                          </button>
+                          <button
+                            onClick={() => handleDelete(item)}
+                            disabled={deleteMutation.isPending || togglePublishMutation.isPending}
+                            className="text-xs text-destructive hover:underline disabled:opacity-40 disabled:cursor-not-allowed"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
