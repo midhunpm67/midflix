@@ -3,9 +3,10 @@ import type { ContentListItem } from '@/types/content';
 
 interface ContentCardProps {
   item: ContentListItem;
+  progress?: number;
 }
 
-export default function ContentCard({ item }: ContentCardProps) {
+export default function ContentCard({ item, progress }: ContentCardProps) {
   return (
     <Link
       to={`/content/${item.slug}`}
@@ -28,6 +29,14 @@ export default function ContentCard({ item }: ContentCardProps) {
           {item.year ?? ''}{item.rating ? ` · ${item.rating}` : ''}
         </p>
       </div>
+      {progress != null && progress > 0 && (
+        <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/20">
+          <div
+            className="h-full bg-primary"
+            style={{ width: `${Math.min(progress, 100)}%` }}
+          />
+        </div>
+      )}
     </Link>
   );
 }

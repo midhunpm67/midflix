@@ -10,6 +10,7 @@ import ContentListPage from '@/pages/admin/ContentListPage'
 import ContentEditPage from '@/pages/admin/ContentEditPage'
 import HomePage from '@/pages/HomePage'
 import ContentDetailPage from '@/pages/ContentDetailPage'
+import WatchPage from '@/pages/WatchPage'
 
 // Placeholder pages — replaced in later phases
 const BrowsePage = () => <div className="p-8 text-white">Browse — Phase 6</div>
@@ -31,7 +32,7 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // Subscriber routes
+  // Subscriber routes (with MainLayout nav bar)
   {
     element: <ProtectedRoute role="subscriber" />,
     children: [
@@ -43,6 +44,9 @@ export const router = createBrowserRouter([
           { path: '/content/:slug', element: <ContentDetailPage /> },
         ],
       },
+      // Watch routes — outside MainLayout (no nav bar), but still subscriber-protected
+      { path: '/watch/:slug', element: <WatchPage /> },
+      { path: '/watch/:slug/episode/:episodeId', element: <WatchPage /> },
     ],
   },
 

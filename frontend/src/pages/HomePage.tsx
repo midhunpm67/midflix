@@ -1,7 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import HeroBanner from '@/components/shared/HeroBanner';
 import CarouselRow from '@/components/shared/CarouselRow';
+import ContentCard from '@/components/shared/ContentCard';
 import { getTrending, getNewReleases } from '@/api/content';
+import { getContinueWatching } from '@/api/watch-history';
+import type { ContentListItem, ContinueWatchingItem } from '@/types/content';
+import { useRef, useState, useEffect } from 'react';
 
 export default function HomePage() {
   const { data: newReleases = [], isLoading: loadingNew } = useQuery({
@@ -14,12 +18,20 @@ export default function HomePage() {
     queryFn: getTrending,
   });
 
+  const { data: continueWatching = [] } = useQuery({
+    queryKey: ['continue-watching'],
+    queryFn: getContinueWatching,
+  });
+
   const heroContent = newReleases.length > 0 ? newReleases[0] : null;
 
   return (
     <div className="-mt-16">
       <HeroBanner content={heroContent} isLoading={loadingNew} />
       <div className="relative z-10 -mt-16 space-y-2">
+        {continueWatching.length > 0 && (
+          <ContinueWatchingRow items={continueWatching} />
+        )}
         <CarouselRow
           title="Trending Now"
           items={trending}
@@ -32,5 +44,99 @@ export default function HomePage() {
         />
       </div>
     </div>
+  );
+}
+
+interface ContinueWatchingRowProps {
+  items: ContinueWatchingItem[];
+}
+
+function ContinueWatchingRow({ items }: ContinueWatchingRowProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  function updateScrollState() {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 0);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+  }
+
+  useEffect(() => {
+    updateScrollState();
+  }, [items]);
+
+  function scroll(direction: 'left' | 'right') {
+    const el = scrollRef.current;
+    if (!el) return;
+    const scrollAmount = el.clientWidth * 0.8;
+    el.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth',
+    });
+  }
+
+  return (
+    <section className="mb-8">
+      <h2 className="text-white text-lg font-semibold mb-3 px-6 md:px-12">Continue Watching</h2>
+      <div className="group/carousel relative">
+        {canScrollLeft && (
+          <button
+            onClick={() => scroll('left')}
+            className="absolute left-1 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-opacity opacity-0 group-hover/carousel:opacity-100 hidden md:flex focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+            aria-label="Scroll left"
+          >
+            &#8249;
+          </button>
+        )}
+        <div
+          ref={scrollRef}
+          onScroll={updateScrollState}
+          className="flex gap-3 overflow-x-auto px-6 md:px-12 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          style={{ scrollSnapType: 'x mandatory' }}
+        >
+          {items.map((item) => {
+            const contentItem: ContentListItem = {
+              id: item.content_id,
+              title: item.content.title,
+              slug: item.content.slug,
+              type: item.content.type,
+              year: null,
+              rating: null,
+              poster_url: item.content.poster_url,
+              backdrop_url: item.content.backdrop_url,
+              genre_ids: [],
+              is_published: true,
+              view_count: 0,
+              video: null,
+              published_at: null,
+              created_at: item.updated_at,
+            };
+            const progress = item.duration_seconds > 0
+              ? (item.progress_seconds / item.duration_seconds) * 100
+              : 0;
+            return (
+              <div
+                key={item.id}
+                className="flex-shrink-0 w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px]"
+                style={{ scrollSnapAlign: 'start' }}
+              >
+                <ContentCard item={contentItem} progress={progress} />
+              </div>
+            );
+          })}
+        </div>
+        {canScrollRight && (
+          <button
+            onClick={() => scroll('right')}
+            className="absolute right-1 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-opacity opacity-0 group-hover/carousel:opacity-100 hidden md:flex focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+            aria-label="Scroll right"
+          >
+            &#8250;
+          </button>
+        )}
+      </div>
+    </section>
   );
 }
