@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { Content, CreateContentPayload } from '@/types/content';
+import { getMuxThumbnailUrl } from '@/lib/mux';
 
 const contentSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -16,6 +18,7 @@ const contentSchema = z.object({
   poster_url: z.string().url('Must be a valid URL').nullable().optional().or(z.literal('')),
   backdrop_url: z.string().url('Must be a valid URL').nullable().optional().or(z.literal('')),
   trailer_url: z.string().url('Must be a valid URL').nullable().optional().or(z.literal('')),
+  playback_id: z.string().nullable().optional(),
 });
 
 type FormValues = z.infer<typeof contentSchema>;
@@ -36,6 +39,7 @@ export default function ContentForm({
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(contentSchema),
@@ -49,8 +53,12 @@ export default function ContentForm({
       poster_url: defaultValues?.poster_url ?? '',
       backdrop_url: defaultValues?.backdrop_url ?? '',
       trailer_url: defaultValues?.trailer_url ?? '',
+      playback_id: defaultValues?.video?.playback_id ?? '',
     },
   });
+
+  const watchedPlaybackId = watch('playback_id');
+  const [thumbnailError, setThumbnailError] = useState(false);
 
   function handleFormSubmit(values: FormValues) {
     onSubmit({
@@ -61,6 +69,7 @@ export default function ContentForm({
       trailer_url: values.trailer_url || null,
       director: values.director || null,
       rating: values.rating || null,
+      video: { playback_id: values.playback_id || null },
     });
   }
 
@@ -172,6 +181,31 @@ export default function ContentForm({
           className="w-full bg-card border border-border text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
         {errors.trailer_url && <p className="text-destructive text-xs mt-1">{errors.trailer_url.message}</p>}
+      </div>
+
+      <div>
+        <label htmlFor="playback_id" className="block text-sm text-muted-foreground mb-1">Mux Playback ID</label>
+        <input
+          id="playback_id"
+          {...register('playback_id', {
+            onChange: () => setThumbnailError(false),
+          })}
+          className="w-full bg-card border border-border text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          placeholder="e.g. a1b2c3d4e5f6g7h8"
+        />
+        {watchedPlaybackId && !thumbnailError && (
+          <img
+            src={getMuxThumbnailUrl(watchedPlaybackId)}
+            alt="Video thumbnail"
+            className="mt-2 rounded border border-border max-w-xs"
+            onError={() => setThumbnailError(true)}
+          />
+        )}
+        {watchedPlaybackId && thumbnailError && (
+          <div className="mt-2 rounded border border-border bg-card px-3 py-2 text-xs text-muted-foreground max-w-xs">
+            Invalid Playback ID — thumbnail could not be loaded
+          </div>
+        )}
       </div>
 
       <button
