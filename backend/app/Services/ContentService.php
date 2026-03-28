@@ -64,6 +64,7 @@ class ContentService
     public function store(array $data): Content
     {
         $data['slug'] = $this->generateUniqueSlug($data['title']);
+        $data = $this->buildVideoField($data);
 
         return Content::create($data);
     }
@@ -73,6 +74,8 @@ class ContentService
         if (isset($data['title']) && $data['title'] !== $content->title) {
             $data['slug'] = $this->generateUniqueSlug($data['title'], (string) $content->_id);
         }
+
+        $data = $this->buildVideoField($data);
 
         $content->update($data);
         $content->refresh();
@@ -115,6 +118,18 @@ class ContentService
             'movies'        => Content::where('type', 'movie')->count(),
             'series'        => Content::where('type', 'series')->count(),
         ];
+    }
+
+    private function buildVideoField(array $data): array
+    {
+        if (is_array($data['video'] ?? null) && array_key_exists('playback_id', $data['video'])) {
+            $playbackId = $data['video']['playback_id'];
+            $data['video'] = [
+                'playback_id' => $playbackId ?: null,
+                'status' => $playbackId ? 'ready' : 'pending',
+            ];
+        }
+        return $data;
     }
 
     private function generateUniqueSlug(string $title, ?string $excludeId = null): string

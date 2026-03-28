@@ -29,6 +29,8 @@ class UpdateContentRequest extends FormRequest
             'poster_url'   => ['sometimes', 'nullable', 'url'],
             'backdrop_url' => ['sometimes', 'nullable', 'url'],
             'trailer_url'  => ['sometimes', 'nullable', 'url'],
+            'video'              => ['sometimes', 'array'],
+            'video.playback_id'  => ['sometimes', 'nullable', 'string', 'max:100'],
         ];
     }
 

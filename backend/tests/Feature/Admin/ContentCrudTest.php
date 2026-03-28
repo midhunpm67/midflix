@@ -194,3 +194,58 @@ test('show returns 404 for unknown content id', function () {
     $this->withToken($token)->getJson('/api/v1/admin/content/000000000000000000000000')
         ->assertStatus(404);
 });
+
+test('admin can create content with video playback_id', function () {
+    [, $token] = makeAdmin();
+
+    $response = $this->withToken($token)->postJson('/api/v1/admin/content', [
+        'title'       => 'Video Test Movie',
+        'description' => 'A movie with a video.',
+        'type'        => 'movie',
+        'video'       => ['playback_id' => 'abc123testplaybackid'],
+    ]);
+
+    $response->assertStatus(201)
+        ->assertJsonPath('data.video.playback_id', 'abc123testplaybackid')
+        ->assertJsonPath('data.video.status', 'ready');
+});
+
+test('updating content with null playback_id sets status to pending', function () {
+    [, $token] = makeAdmin();
+    $content = Content::factory()->create();
+
+    $response = $this->withToken($token)->putJson("/api/v1/admin/content/{$content->_id}", [
+        'video' => ['playback_id' => null],
+    ]);
+
+    $response->assertStatus(200)
+        ->assertJsonPath('data.video.playback_id', null)
+        ->assertJsonPath('data.video.status', 'pending');
+});
+
+test('updating content with playback_id sets status to ready', function () {
+    [, $token] = makeAdmin();
+    $content = Content::factory()->create();
+
+    $response = $this->withToken($token)->putJson("/api/v1/admin/content/{$content->_id}", [
+        'video' => ['playback_id' => 'newplaybackid456'],
+    ]);
+
+    $response->assertStatus(200)
+        ->assertJsonPath('data.video.playback_id', 'newplaybackid456')
+        ->assertJsonPath('data.video.status', 'ready');
+});
+
+test('video playback_id rejects non-string values', function () {
+    [, $token] = makeAdmin();
+
+    $response = $this->withToken($token)->postJson('/api/v1/admin/content', [
+        'title'       => 'Bad Video',
+        'description' => 'Should fail validation.',
+        'type'        => 'movie',
+        'video'       => ['playback_id' => 12345],
+    ]);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['video.playback_id']);
+});

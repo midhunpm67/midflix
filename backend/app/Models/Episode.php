@@ -23,10 +23,9 @@ class Episode extends Model
     protected $casts = [
         'number' => 'integer',
         'duration' => 'integer',
-        'video' => 'array',
     ];
 
     protected $attributes = [
-        'video' => '{"hls_url":null,"status":"pending"}',
+        'video' => '{"playback_id":null,"status":"pending"}',
     ];
 }

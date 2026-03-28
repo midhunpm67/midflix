@@ -21,6 +21,8 @@ class StoreEpisodeRequest extends FormRequest
             'description'   => ['sometimes', 'nullable', 'string'],
             'duration'      => ['sometimes', 'nullable', 'integer', 'min:1'],
             'thumbnail_url' => ['sometimes', 'nullable', 'url'],
+            'video'              => ['sometimes', 'array'],
+            'video.playback_id'  => ['sometimes', 'nullable', 'string', 'max:100'],
         ];
     }
 

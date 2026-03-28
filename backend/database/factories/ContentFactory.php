@@ -27,7 +27,7 @@ class ContentFactory extends Factory
             'poster_url'   => null,
             'backdrop_url' => null,
             'trailer_url'  => null,
-            'video'        => ['hls_url' => null, 'status' => 'pending'],
+            'video'        => ['playback_id' => null, 'status' => 'pending'],
             'is_published' => false,
             'view_count'   => 0,
         ];
