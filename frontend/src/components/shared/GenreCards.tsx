@@ -85,9 +85,9 @@ export default function GenreCards() {
                 type="button"
                 onClick={() => navigate(`/browse?genre=${genre.id}`)}
                 style={{ scrollSnapAlign: 'start' }}
-                className={`flex-shrink-0 w-[140px] sm:w-[150px] md:w-[160px] rounded-xl bg-gradient-to-br ring-1 ring-white/[0.06] transition-all duration-200 hover:scale-105 hover:ring-white/20 hover:brightness-110 active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${colors}`}
+                className={`flex-shrink-0 w-[150px] sm:w-[160px] md:w-[175px] lg:w-[190px] xl:w-[200px] rounded-xl bg-gradient-to-br ring-1 ring-white/[0.06] transition-all duration-200 hover:scale-105 hover:ring-white/20 hover:brightness-110 active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${colors}`}
               >
-                <div className="flex items-center justify-center h-20 sm:h-24">
+                <div className="flex items-center justify-center aspect-[4/3]">
                   <span className="font-bold text-sm sm:text-base drop-shadow-sm">{genre.name}</span>
                 </div>
               </button>
