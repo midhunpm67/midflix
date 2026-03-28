@@ -16,44 +16,47 @@ export default function ContentCard({ item, progress }: ContentCardProps) {
 
   function handleMouseEnter() {
     if (hideTimer.current) clearTimeout(hideTimer.current);
-    showTimer.current = setTimeout(() => setShowPopup(true), 400);
+    showTimer.current = setTimeout(() => setShowPopup(true), 500);
   }
 
   function handleMouseLeave() {
     if (showTimer.current) clearTimeout(showTimer.current);
-    hideTimer.current = setTimeout(() => setShowPopup(false), 200);
+    hideTimer.current = setTimeout(() => setShowPopup(false), 250);
   }
 
   return (
     <div
-      className="relative"
+      className="relative group/card"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       {/* Card thumbnail */}
       <Link
         to={`/content/${item.slug}`}
-        className="group relative aspect-[2/3] rounded-xl overflow-hidden flex-shrink-0 bg-surface block focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+        className="relative aspect-[2/3] rounded-xl overflow-hidden flex-shrink-0 bg-[#12121a] block focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none transition-all duration-300 group-hover/card:ring-2 group-hover/card:ring-primary/40 group-hover/card:shadow-xl group-hover/card:shadow-primary/10"
       >
         {(item.poster_url || item.backdrop_url) ? (
           <img
             src={item.poster_url ?? item.backdrop_url!}
             alt={item.title}
-            className="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+            className="w-full h-full object-cover transition-all duration-500 ease-out group-hover/card:scale-105 group-hover/card:brightness-110"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-surface-variant to-surface flex items-center justify-center p-4">
-            <span className="text-white/60 text-sm text-center font-medium leading-tight">{item.title}</span>
+          <div className="w-full h-full bg-gradient-to-br from-[#1a1a2e] via-[#16162a] to-[#0f0f1a] flex items-center justify-center p-4">
+            <span className="text-white/50 text-sm text-center font-medium leading-tight">{item.title}</span>
           </div>
         )}
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent pt-12 pb-3 px-3">
-          <p className="text-white text-[13px] font-semibold leading-tight line-clamp-2 drop-shadow-lg">{item.title}</p>
+        {/* Bottom gradient */}
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/60 to-transparent pt-16 pb-3 px-3">
+          <p className="text-white text-[13px] font-bold leading-tight line-clamp-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+            {item.title}
+          </p>
         </div>
-        <div className="absolute inset-0 rounded-xl ring-0 group-hover:ring-2 ring-white/30 transition-all duration-300 pointer-events-none" />
+        {/* Progress bar */}
         {progress != null && progress > 0 && (
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10">
             <div
-              className="h-full bg-primary rounded-r-full"
+              className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-r-full"
               style={{ width: `${Math.min(progress, 100)}%` }}
             />
           </div>
@@ -61,9 +64,7 @@ export default function ContentCard({ item, progress }: ContentCardProps) {
       </Link>
 
       {/* Hover popup */}
-      {showPopup && (
-        <HoverPopup item={item} />
-      )}
+      {showPopup && <HoverPopup item={item} />}
     </div>
   );
 }
@@ -80,10 +81,10 @@ function HoverPopup({ item }: { item: ContentListItem }) {
     .filter(Boolean);
 
   return (
-    <div className="absolute z-50 top-0 left-1/2 -translate-x-1/2 w-[280px] animate-in fade-in zoom-in-95 duration-200 pointer-events-auto">
-      <div className="bg-[#181820] rounded-xl overflow-hidden shadow-2xl shadow-black/60 ring-1 ring-white/10">
-        {/* Poster image */}
-        <div className="relative aspect-[4/3] overflow-hidden">
+    <div className="absolute z-50 top-0 left-1/2 -translate-x-1/2 w-[300px] popup-enter pointer-events-auto">
+      <div className="relative bg-[#12121a] rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,255,0.06)]">
+        {/* Backdrop image with cinematic overlay */}
+        <div className="relative aspect-[16/10] overflow-hidden">
           {(item.backdrop_url || item.poster_url) ? (
             <img
               src={item.backdrop_url ?? item.poster_url!}
@@ -91,50 +92,77 @@ function HoverPopup({ item }: { item: ContentListItem }) {
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-surface-variant to-surface" />
+            <div className="w-full h-full bg-gradient-to-br from-[#1a1a2e] to-[#12121a]" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#181820] via-transparent to-transparent" />
-          <h3 className="absolute bottom-3 left-4 right-4 text-white font-bold text-base leading-tight drop-shadow-lg line-clamp-2">
-            {item.title}
-          </h3>
+          {/* Cinematic gradient overlays */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#12121a] via-[#12121a]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#12121a]/30 to-transparent" />
+
+          {/* Title on image */}
+          <div className="absolute bottom-0 left-0 right-0 px-5 pb-1">
+            <h3 className="text-white font-bold text-lg leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] line-clamp-2">
+              {item.title}
+            </h3>
+          </div>
         </div>
 
-        {/* Details */}
-        <div className="px-4 pb-4 -mt-1">
-          {/* Watch Now button */}
-          <Link
-            to={`/content/${item.slug}`}
-            className="flex items-center justify-center gap-2 w-full py-2.5 bg-white/10 hover:bg-white/15 text-white rounded-lg text-sm font-semibold transition-colors mt-2"
-          >
-            <span className="text-xs">&#9654;</span>
-            Watch Now
-          </Link>
-
-          {/* Metadata */}
-          <div className="flex flex-wrap items-center gap-1.5 mt-3 text-[11px] text-white/50">
-            {item.year && <span>{item.year}</span>}
+        {/* Content area */}
+        <div className="px-5 pb-5 -mt-1">
+          {/* Metadata chips */}
+          <div className="flex flex-wrap items-center gap-2 mt-2.5">
+            {item.year && (
+              <span className="text-[11px] text-white/60 font-medium">{item.year}</span>
+            )}
             {item.rating && (
               <>
-                <span className="text-white/20">&#183;</span>
-                <span className="px-1 py-0.5 border border-white/20 rounded text-[10px] leading-none">{item.rating}</span>
+                <span className="w-1 h-1 rounded-full bg-white/20" />
+                <span className="px-1.5 py-0.5 border border-white/15 rounded text-[10px] text-white/60 font-medium leading-none">
+                  {item.rating}
+                </span>
               </>
             )}
-            <span className="text-white/20">&#183;</span>
-            <span className="capitalize">{item.type}</span>
+            <span className="w-1 h-1 rounded-full bg-white/20" />
+            <span className="text-[11px] text-white/60 font-medium capitalize">{item.type}</span>
           </div>
 
           {/* Genres */}
           {genreNames.length > 0 && (
-            <div className="flex flex-wrap items-center gap-1 mt-2 text-[11px] text-white/40">
+            <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 mt-2.5">
               {genreNames.map((name, i) => (
-                <span key={name}>
-                  {i > 0 && <span className="text-white/20 mx-0.5">|</span>}
+                <span key={name} className="text-[11px] text-white/40">
+                  {i > 0 && <span className="text-white/15 mr-1.5">|</span>}
                   {name}
                 </span>
               ))}
             </div>
           )}
+
+          {/* Action buttons */}
+          <div className="flex items-center gap-2 mt-4">
+            <Link
+              to={`/content/${item.slug}`}
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-primary to-[#0490c4] hover:from-[#06bdf4] hover:to-primary text-white rounded-xl text-[13px] font-bold transition-all duration-300 shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor">
+                <path d="M0 0v14l12-7z" />
+              </svg>
+              Watch Now
+            </Link>
+            <Link
+              to={`/content/${item.slug}`}
+              className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-white/50 hover:text-white transition-all duration-200 ring-1 ring-white/[0.08] hover:ring-white/[0.15]"
+              aria-label="More info"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4M12 8h.01" />
+              </svg>
+            </Link>
+          </div>
         </div>
+
+        {/* Subtle top glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
       </div>
     </div>
   );

@@ -23,19 +23,23 @@ body::after {
 }
 
 /* Hover popup animation */
-@keyframes popupIn {
-  from {
+@keyframes popupEnter {
+  0% {
     opacity: 0;
-    transform: translateX(-50%) scale(0.92);
+    transform: translateX(-50%) scale(0.9) translateY(8px);
   }
-  to {
+  60% {
     opacity: 1;
-    transform: translateX(-50%) scale(1);
+    transform: translateX(-50%) scale(1.01) translateY(-1px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1) translateY(0);
   }
 }
 
-.animate-in {
-  animation: popupIn 200ms ease-out forwards;
+.popup-enter {
+  animation: popupEnter 280ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
