@@ -1,8 +1,9 @@
 import { Link, Outlet } from 'react-router-dom'
+import Footer from '@/components/shared/Footer'
 
 export function MainLayout() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <nav className="fixed top-0 left-0 right-0 z-50 h-16 bg-surface/60 backdrop-blur-[30px]">
         <div className="max-w-[1400px] mx-auto px-6 h-full flex items-center justify-between">
           <div className="flex items-center gap-6">
@@ -18,9 +19,10 @@ export function MainLayout() {
           </div>
         </div>
       </nav>
-      <main className="pt-16">
+      <main className="pt-16 flex-1">
         <Outlet />
       </main>
+      <Footer />
     </div>
   )
 }
