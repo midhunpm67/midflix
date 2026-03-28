@@ -83,6 +83,7 @@ export default function EpisodeList({ seasonId, episodes }: EpisodeListProps) {
               onSubmit={(data) => updateMutation.mutate({ id: ep.id, data })}
               onCancel={() => setEditingId(null)}
               isSubmitting={updateMutation.isPending}
+              error={updateMutation.isError ? ((updateMutation.error as Error)?.message ?? 'Something went wrong') : undefined}
             />
           ) : (
             <div className="flex items-center gap-3 text-sm py-1">
@@ -117,6 +118,7 @@ export default function EpisodeList({ seasonId, episodes }: EpisodeListProps) {
           onSubmit={(data) => createMutation.mutate(data)}
           onCancel={() => setShowAdd(false)}
           isSubmitting={createMutation.isPending}
+          error={createMutation.isError ? ((createMutation.error as Error)?.message ?? 'Something went wrong') : undefined}
         />
       ) : (
         <button
@@ -135,6 +137,7 @@ interface InlineEpisodeFormProps {
   onSubmit: (data: EpisodeFormValues) => void;
   onCancel: () => void;
   isSubmitting: boolean;
+  error?: string;
 }
 
 function InlineEpisodeForm({
@@ -142,6 +145,7 @@ function InlineEpisodeForm({
   onSubmit,
   onCancel,
   isSubmitting,
+  error,
 }: InlineEpisodeFormProps) {
   const {
     register,
@@ -160,7 +164,6 @@ function InlineEpisodeForm({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex items-start gap-2 py-1">
       <input
-        id="ep-number"
         {...register('number')}
         type="number"
         placeholder="#"
@@ -168,7 +171,6 @@ function InlineEpisodeForm({
       />
       <div className="flex-1">
         <input
-          id="ep-title"
           {...register('title')}
           placeholder="Episode title"
           className="w-full bg-card border border-border text-white rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
@@ -178,7 +180,6 @@ function InlineEpisodeForm({
         )}
       </div>
       <input
-        id="ep-duration"
         {...register('duration')}
         type="number"
         placeholder="min"
@@ -198,6 +199,7 @@ function InlineEpisodeForm({
       >
         Cancel
       </button>
+      {error && <p className="text-destructive text-xs">{error}</p>}
     </form>
   );
 }

@@ -77,6 +77,7 @@ export default function SeasonManager({ contentId, slug }: SeasonManagerProps) {
                   onSubmit={(data) => updateMutation.mutate({ id: season.id, data })}
                   onCancel={() => setEditingId(null)}
                   isSubmitting={updateMutation.isPending}
+                  error={updateMutation.isError ? ((updateMutation.error as Error)?.message ?? 'Something went wrong') : undefined}
                 />
               ) : (
                 <>
@@ -127,6 +128,7 @@ export default function SeasonManager({ contentId, slug }: SeasonManagerProps) {
             onSubmit={(data) => createMutation.mutate(data)}
             onCancel={() => setShowAdd(false)}
             isSubmitting={createMutation.isPending}
+            error={createMutation.isError ? ((createMutation.error as Error)?.message ?? 'Something went wrong') : undefined}
           />
         </div>
       ) : (
@@ -142,10 +144,12 @@ export default function SeasonManager({ contentId, slug }: SeasonManagerProps) {
 }
 
 function EpisodesWrapper({ seasonId }: { seasonId: string }) {
-  const { data: episodes = [] } = useQuery({
+  const { data: episodes = [], isLoading } = useQuery({
     queryKey: ['admin-season-episodes', seasonId],
     queryFn: () => getSeasonEpisodes(seasonId),
   });
+
+  if (isLoading) return <div className="px-4 py-3 bg-background text-sm text-muted-foreground">Loading episodes…</div>;
 
   return (
     <div className="px-4 py-3 bg-background">
@@ -159,6 +163,7 @@ interface InlineSeasonFormProps {
   onSubmit: (data: SeasonFormValues) => void;
   onCancel: () => void;
   isSubmitting: boolean;
+  error?: string;
 }
 
 function InlineSeasonForm({
@@ -166,6 +171,7 @@ function InlineSeasonForm({
   onSubmit,
   onCancel,
   isSubmitting,
+  error,
 }: InlineSeasonFormProps) {
   const {
     register,
@@ -178,23 +184,23 @@ function InlineSeasonForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex items-center gap-2 flex-1">
-      <input
-        id="season-number"
-        {...register('number')}
-        type="number"
-        placeholder="Season #"
-        className="w-20 bg-background border border-border text-white rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-      />
-      <div className="flex-1">
+      <div>
         <input
-          id="season-title"
-          {...register('title')}
-          placeholder="Season title (optional)"
-          className="w-full bg-background border border-border text-white rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+          {...register('number')}
+          type="number"
+          placeholder="Season #"
+          className="w-20 bg-background border border-border text-white rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
         />
         {errors.number && (
           <p className="text-destructive text-xs">{errors.number.message}</p>
         )}
+      </div>
+      <div className="flex-1">
+        <input
+          {...register('title')}
+          placeholder="Season title (optional)"
+          className="w-full bg-background border border-border text-white rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+        />
       </div>
       <button
         type="submit"
@@ -210,6 +216,7 @@ function InlineSeasonForm({
       >
         Cancel
       </button>
+      {error && <p className="text-destructive text-xs">{error}</p>}
     </form>
   );
 }
