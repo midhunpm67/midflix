@@ -22,6 +22,10 @@ class Content extends Model
         'director',
         'year',
         'rating',
+        'duration',
+        'language',
+        'imdb_rating',
+        'is_featured',
         'poster_url',
         'backdrop_url',
         'trailer_url',
@@ -33,13 +37,16 @@ class Content extends Model
 
     protected $casts = [
         'is_published' => 'boolean',
+        'is_featured'  => 'boolean',
         'view_count'   => 'integer',
         'published_at' => 'datetime',
         'year'         => 'integer',
+        'duration'     => 'integer',
     ];
 
     protected $attributes = [
         'is_published' => false,
+        'is_featured'  => false,
         'view_count'   => 0,
     ];
 }

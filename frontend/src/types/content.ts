@@ -22,6 +22,7 @@ export interface ContentListItem {
   backdrop_url: string | null;
   genre_ids: string[];
   is_published: boolean;
+  is_featured: boolean;
   view_count: number;
   video: VideoAsset | null;
   published_at: string | null;
@@ -33,6 +34,9 @@ export interface Content extends ContentListItem {
   cast: string[];
   director: string | null;
   trailer_url: string | null;
+  duration: number | null;
+  language: string | null;
+  imdb_rating: number | null;
   video: VideoAsset;
   updated_at: string;
 }
@@ -78,6 +82,10 @@ export interface CreateContentPayload {
   director?: string | null;
   year?: number | null;
   rating?: string | null;
+  duration?: number | null;
+  language?: string | null;
+  imdb_rating?: number | null;
+  is_featured?: boolean;
   poster_url?: string | null;
   backdrop_url?: string | null;
   trailer_url?: string | null;

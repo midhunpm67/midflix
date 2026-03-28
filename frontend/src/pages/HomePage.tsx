@@ -110,6 +110,7 @@ function ContinueWatchingRow({ items }: ContinueWatchingRowProps) {
               backdrop_url: item.content.backdrop_url,
               genre_ids: [],
               is_published: true,
+              is_featured: false,
               view_count: 0,
               video: null,
               published_at: null,

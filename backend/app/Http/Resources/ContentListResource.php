@@ -22,6 +22,7 @@ class ContentListResource extends JsonResource
             'is_published' => $this->is_published,
             'view_count'   => $this->view_count,
             'video'        => $this->video,
+            'is_featured'  => $this->is_featured ?? false,
             'published_at' => $this->published_at?->toIso8601String(),
             'created_at'   => $this->created_at?->toIso8601String(),
         ];

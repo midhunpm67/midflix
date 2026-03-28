@@ -29,6 +29,10 @@ export default function ContentForm({
   const [director, setDirector] = useState(defaultValues?.director ?? '');
   const [year, setYear] = useState(defaultValues?.year?.toString() ?? '');
   const [rating, setRating] = useState(defaultValues?.rating ?? '');
+  const [duration, setDuration] = useState(defaultValues?.duration?.toString() ?? '');
+  const [language, setLanguage] = useState(defaultValues?.language ?? '');
+  const [imdbRating, setImdbRating] = useState(defaultValues?.imdb_rating?.toString() ?? '');
+  const [isFeatured, setIsFeatured] = useState(defaultValues?.is_featured ?? false);
   const [posterUrl, setPosterUrl] = useState(defaultValues?.poster_url ?? '');
   const [backdropUrl, setBackdropUrl] = useState(defaultValues?.backdrop_url ?? '');
   const [trailerUrl, setTrailerUrl] = useState(defaultValues?.trailer_url ?? '');
@@ -85,6 +89,10 @@ export default function ContentForm({
       director: director.trim() || null,
       year: year ? parseInt(year) : null,
       rating: rating || null,
+      duration: duration ? parseInt(duration) : null,
+      language: language || null,
+      imdb_rating: imdbRating ? parseFloat(imdbRating) : null,
+      is_featured: isFeatured,
       poster_url: posterUrl || null,
       backdrop_url: backdropUrl || null,
       trailer_url: trailerUrl || null,
@@ -125,11 +133,16 @@ export default function ContentForm({
         <FormField label="Description" required>
           <FormTextarea placeholder="Write a compelling synopsis..." value={description} onChange={setDescription} />
         </FormField>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-4 gap-4">
           <FormField label="Release Year">
             <FormInput placeholder="2024" type="number" value={year} onChange={setYear} />
           </FormField>
-          <FormField label="Age Rating">
+          {type === 'movie' && (
+            <FormField label="Duration (mins)" required>
+              <FormInput placeholder="148" type="number" value={duration} onChange={setDuration} />
+            </FormField>
+          )}
+          <FormField label="Age Rating" required>
             <FormSelect value={rating} onChange={setRating}>
               <option value="">Select rating</option>
               {['G', 'PG', 'PG-13', 'R', 'NC-17', 'TV-MA', 'TV-14', 'TV-PG', 'TV-G', 'TV-Y'].map((r) => (
@@ -137,8 +150,41 @@ export default function ContentForm({
               ))}
             </FormSelect>
           </FormField>
+          <FormField label="Language" required>
+            <FormSelect value={language} onChange={setLanguage}>
+              <option value="">Select language</option>
+              {['English', 'Hindi', 'Tamil', 'Telugu', 'Malayalam', 'Kannada', 'Bengali', 'Marathi', 'Spanish', 'French', 'Japanese', 'Korean'].map((l) => (
+                <option key={l} value={l}>{l}</option>
+              ))}
+            </FormSelect>
+          </FormField>
+        </div>
+        <div className="grid grid-cols-3 gap-4">
+          <FormField label="IMDb Rating" hint="0.0 to 10.0">
+            <FormInput placeholder="8.6" type="number" value={imdbRating} onChange={setImdbRating} />
+          </FormField>
           <FormField label="Trailer URL">
             <FormInput placeholder="https://..." value={trailerUrl} onChange={setTrailerUrl} />
+          </FormField>
+          <FormField label="Featured">
+            <div className="flex items-center gap-3 h-10">
+              <button
+                type="button"
+                onClick={() => setIsFeatured(!isFeatured)}
+                className={`relative w-11 h-6 rounded-full transition-colors duration-200 flex-shrink-0 ${
+                  isFeatured ? 'bg-primary' : 'bg-[#2a2a2a]'
+                }`}
+              >
+                <div
+                  className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-200 ${
+                    isFeatured ? 'left-6' : 'left-1'
+                  }`}
+                />
+              </button>
+              <span className={`text-xs font-medium ${isFeatured ? 'text-primary' : 'text-white/30'}`}>
+                {isFeatured ? 'Featured on homepage' : 'Not featured'}
+              </span>
+            </div>
           </FormField>
         </div>
       </Section>

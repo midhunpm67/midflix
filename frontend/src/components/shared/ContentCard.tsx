@@ -48,6 +48,15 @@ export default function ContentCard({ item, progress }: ContentCardProps) {
             <span className="text-white/50 text-sm text-center font-medium leading-tight">{item.title}</span>
           </div>
         )}
+        {/* Featured badge */}
+        {item.is_featured && (
+          <div className="absolute top-2 left-2 z-10 flex items-center gap-1 bg-gradient-to-r from-amber-500 to-yellow-500 px-2 py-0.5 rounded-md shadow-lg shadow-amber-500/30">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="#fff">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <span className="text-[9px] font-bold text-white uppercase tracking-wider">Premium</span>
+          </div>
+        )}
         {/* Bottom gradient */}
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/60 to-transparent pt-16 pb-3 px-3">
           <p className="text-white text-[13px] font-bold leading-tight line-clamp-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
