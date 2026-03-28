@@ -12,7 +12,7 @@ const contentSchema = z.object({
     (v) => (v === '' || v === null || v === undefined ? null : Number(v)),
     z.number().int().min(1888).max(2100).nullable().optional()
   ),
-  rating: z.string().max(10).nullable().optional(),
+  rating: z.enum(['G', 'PG', 'PG-13', 'R', 'NC-17', 'TV-MA', 'TV-14', 'TV-PG', 'TV-G', 'TV-Y', '']).transform((v) => v === '' ? null : v).nullable().optional(),
   poster_url: z.string().url('Must be a valid URL').nullable().optional().or(z.literal('')),
   backdrop_url: z.string().url('Must be a valid URL').nullable().optional().or(z.literal('')),
   trailer_url: z.string().url('Must be a valid URL').nullable().optional().or(z.literal('')),
@@ -45,7 +45,7 @@ export default function ContentForm({
       type: defaultValues?.type ?? 'movie',
       director: defaultValues?.director ?? '',
       year: defaultValues?.year ?? undefined,
-      rating: defaultValues?.rating ?? '',
+      rating: (defaultValues?.rating ?? '') as FormValues['rating'],
       poster_url: defaultValues?.poster_url ?? '',
       backdrop_url: defaultValues?.backdrop_url ?? '',
       trailer_url: defaultValues?.trailer_url ?? '',
@@ -121,12 +121,24 @@ export default function ContentForm({
       </div>
 
       <div>
-        <label htmlFor="rating" className="block text-sm text-muted-foreground mb-1">Rating (e.g. PG-13)</label>
-        <input
+        <label htmlFor="rating" className="block text-sm text-muted-foreground mb-1">Rating</label>
+        <select
           id="rating"
           {...register('rating')}
-          className="w-full bg-card border border-border text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-        />
+          className="bg-card border border-border text-white rounded px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+        >
+          <option value="">Select rating</option>
+          <option value="G">G</option>
+          <option value="PG">PG</option>
+          <option value="PG-13">PG-13</option>
+          <option value="R">R</option>
+          <option value="NC-17">NC-17</option>
+          <option value="TV-MA">TV-MA</option>
+          <option value="TV-14">TV-14</option>
+          <option value="TV-PG">TV-PG</option>
+          <option value="TV-G">TV-G</option>
+          <option value="TV-Y">TV-Y</option>
+        </select>
       </div>
 
       <div>

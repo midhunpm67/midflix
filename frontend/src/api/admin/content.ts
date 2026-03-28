@@ -80,3 +80,13 @@ export async function adminUpdateEpisode(id: string, payload: UpdateEpisodePaylo
 export async function adminDeleteEpisode(id: string): Promise<void> {
   await apiClient.delete(`/api/v1/admin/episodes/${id}`);
 }
+
+export async function adminGetContentSeasons(contentId: string): Promise<Season[]> {
+  const res = await apiClient.get<{ data: Season[] }>(`/api/v1/admin/content/${contentId}/seasons`);
+  return res.data.data;
+}
+
+export async function adminGetSeasonEpisodes(seasonId: string): Promise<Episode[]> {
+  const res = await apiClient.get<{ data: Episode[] }>(`/api/v1/admin/seasons/${seasonId}/episodes`);
+  return res.data.data;
+}

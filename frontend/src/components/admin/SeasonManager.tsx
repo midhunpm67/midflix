@@ -8,8 +8,9 @@ import {
   adminCreateSeason,
   adminUpdateSeason,
   adminDeleteSeason,
+  adminGetContentSeasons,
+  adminGetSeasonEpisodes,
 } from '@/api/admin/content';
-import { getContentSeasons, getSeasonEpisodes } from '@/api/content';
 
 const seasonSchema = z.object({
   number: z.coerce.number().int().min(1, 'Required'),
@@ -20,10 +21,9 @@ type SeasonFormValues = z.infer<typeof seasonSchema>;
 
 interface SeasonManagerProps {
   contentId: string;
-  slug: string;
 }
 
-export default function SeasonManager({ contentId, slug }: SeasonManagerProps) {
+export default function SeasonManager({ contentId }: SeasonManagerProps) {
   const queryClient = useQueryClient();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -31,7 +31,7 @@ export default function SeasonManager({ contentId, slug }: SeasonManagerProps) {
 
   const { data: seasons = [], isLoading } = useQuery({
     queryKey: ['admin-content-seasons', contentId],
-    queryFn: () => getContentSeasons(slug),
+    queryFn: () => adminGetContentSeasons(contentId),
   });
 
   const invalidate = () => {
@@ -146,7 +146,7 @@ export default function SeasonManager({ contentId, slug }: SeasonManagerProps) {
 function EpisodesWrapper({ seasonId }: { seasonId: string }) {
   const { data: episodes = [], isLoading } = useQuery({
     queryKey: ['admin-season-episodes', seasonId],
-    queryFn: () => getSeasonEpisodes(seasonId),
+    queryFn: () => adminGetSeasonEpisodes(seasonId),
   });
 
   if (isLoading) return <div className="px-4 py-3 bg-background text-sm text-muted-foreground">Loading episodes…</div>;
