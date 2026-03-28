@@ -123,7 +123,7 @@ function ModalContent({ slug }: { slug: string }) {
           <img
             src={content.backdrop_url}
             alt=""
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-top"
           />
         ) : content.poster_url ? (
           <img

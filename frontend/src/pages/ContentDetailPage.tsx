@@ -73,18 +73,26 @@ export default function ContentDetailPage() {
   return (
     <div className="-mt-16">
       {/* Backdrop */}
-      <div className="relative w-full h-[40vh] sm:h-[50vh] md:h-[60vh] overflow-hidden">
+      <div className="relative w-full h-[50vh] sm:h-[60vh] md:h-[70vh] overflow-hidden">
         {content.backdrop_url ? (
           <img
             src={content.backdrop_url}
             alt=""
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover object-top"
+          />
+        ) : content.poster_url ? (
+          <img
+            src={content.poster_url}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover object-top"
           />
         ) : (
           <div className="absolute inset-0 bg-surface" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-r from-[rgba(10,10,10,0.95)] via-[rgba(10,10,10,0.6)] to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+        {/* Gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/60 to-background/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/40 to-transparent h-24" />
       </div>
 
       {/* Info section */}

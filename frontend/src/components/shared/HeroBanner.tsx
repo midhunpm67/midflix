@@ -23,11 +23,11 @@ export default function HeroBanner({ content, isLoading }: HeroBannerProps) {
 
   return (
     <div className="relative w-full h-[60vh] sm:h-[70vh] md:h-[80vh] overflow-hidden">
-      {content.backdrop_url ? (
+      {(content.backdrop_url || content.poster_url) ? (
         <img
-          src={content.backdrop_url}
+          src={content.backdrop_url ?? content.poster_url!}
           alt=""
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-top"
         />
       ) : (
         <div className="absolute inset-0 bg-surface" />
