@@ -10,11 +10,11 @@ export default function ContentCard({ item, progress }: ContentCardProps) {
   return (
     <Link
       to={`/content/${item.slug}`}
-      className="group relative aspect-[2/3] rounded-card overflow-hidden flex-shrink-0 bg-surface block focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+      className="group relative aspect-video rounded-card overflow-hidden flex-shrink-0 bg-surface block focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
     >
-      {item.poster_url ? (
+      {(item.backdrop_url || item.poster_url) ? (
         <img
-          src={item.poster_url}
+          src={item.backdrop_url ?? item.poster_url!}
           alt={item.title}
           className="w-full h-full object-cover transition-transform duration-200 ease-out group-hover:scale-[1.08]"
         />

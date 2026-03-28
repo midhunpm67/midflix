@@ -119,7 +119,7 @@ function ContinueWatchingRow({ items }: ContinueWatchingRowProps) {
             return (
               <div
                 key={item.id}
-                className="flex-shrink-0 w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px]"
+                className="flex-shrink-0 w-[220px] sm:w-[260px] md:w-[300px] lg:w-[320px]"
                 style={{ scrollSnapAlign: 'start' }}
               >
                 <ContentCard item={contentItem} progress={progress} />
