@@ -90,3 +90,13 @@ export async function adminGetSeasonEpisodes(seasonId: string): Promise<Episode[
   const res = await apiClient.get<{ data: Episode[] }>(`/api/v1/admin/seasons/${seasonId}/episodes`);
   return res.data.data;
 }
+
+export async function adminUploadImage(file: File, type: 'poster' | 'backdrop'): Promise<string> {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('type', type);
+  const res = await apiClient.post('/api/v1/admin/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return res.data.data.url;
+}

@@ -19,6 +19,7 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
         Route::get('/stats', [\App\Http\Controllers\Api\V1\Admin\StatsController::class, 'index']);
+        Route::post('/upload', [\App\Http\Controllers\Api\V1\Admin\UploadController::class, 'store']);
 
         Route::get('/content', [\App\Http\Controllers\Api\V1\Admin\ContentController::class, 'index']);
         Route::post('/content', [\App\Http\Controllers\Api\V1\Admin\ContentController::class, 'store']);
@@ -49,6 +50,10 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/genres', [\App\Http\Controllers\Api\V1\GenreController::class, 'index']);
+
+        Route::post('/me/watch-history', [\App\Http\Controllers\Api\V1\WatchHistoryController::class, 'store']);
+        Route::get('/me/watch-history/{contentId}', [\App\Http\Controllers\Api\V1\WatchHistoryController::class, 'show']);
+        Route::get('/me/continue-watching', [\App\Http\Controllers\Api\V1\WatchHistoryController::class, 'continueWatching']);
 
         Route::middleware('subscriber')->group(function () {
             Route::get('/content/{slug}/seasons', [\App\Http\Controllers\Api\V1\PublicBrowseController::class, 'seasons']);
