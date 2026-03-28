@@ -42,6 +42,31 @@ body::after {
   animation: popupEnter 280ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Content modal animations */
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-fade-in {
+  animation: modalFadeIn 250ms ease-out forwards;
+}
+
+.modal-slide-up {
+  animation: modalSlideUp 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;

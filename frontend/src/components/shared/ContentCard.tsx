@@ -1,7 +1,8 @@
 import { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+// Link removed — cards now open modal instead of navigating
 import { useQuery } from '@tanstack/react-query';
 import { getGenres } from '@/api/content';
+import { useModalStore } from '@/stores/modalStore';
 import type { ContentListItem } from '@/types/content';
 
 interface ContentCardProps {
@@ -31,9 +32,10 @@ export default function ContentCard({ item, progress }: ContentCardProps) {
       onMouseLeave={handleMouseLeave}
     >
       {/* Card thumbnail */}
-      <Link
-        to={`/content/${item.slug}`}
-        className="relative aspect-[2/3] rounded-xl overflow-hidden flex-shrink-0 bg-[#12121a] block focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none transition-all duration-300 group-hover/card:ring-2 group-hover/card:ring-primary/40 group-hover/card:shadow-xl group-hover/card:shadow-primary/10"
+      <button
+        type="button"
+        onClick={() => useModalStore.getState().openContentModal(item.slug)}
+        className="relative aspect-[2/3] rounded-xl overflow-hidden flex-shrink-0 bg-[#12121a] block w-full text-left focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none transition-all duration-300 group-hover/card:ring-2 group-hover/card:ring-primary/40 group-hover/card:shadow-xl group-hover/card:shadow-primary/10 cursor-pointer"
       >
         {(item.poster_url || item.backdrop_url) ? (
           <img
@@ -61,7 +63,7 @@ export default function ContentCard({ item, progress }: ContentCardProps) {
             />
           </div>
         )}
-      </Link>
+      </button>
 
       {/* Hover popup */}
       {showPopup && <HoverPopup item={item} />}
@@ -139,17 +141,19 @@ function HoverPopup({ item }: { item: ContentListItem }) {
 
           {/* Action buttons */}
           <div className="flex items-center gap-2 mt-4">
-            <Link
-              to={`/content/${item.slug}`}
+            <button
+              type="button"
+              onClick={() => useModalStore.getState().openContentModal(item.slug)}
               className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gradient-to-r from-primary to-[#0490c4] hover:from-[#06bdf4] hover:to-primary text-white rounded-xl text-[13px] font-bold transition-all duration-300 shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] active:scale-[0.98]"
             >
               <svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor">
                 <path d="M0 0v14l12-7z" />
               </svg>
               Watch Now
-            </Link>
-            <Link
-              to={`/content/${item.slug}`}
+            </button>
+            <button
+              type="button"
+              onClick={() => useModalStore.getState().openContentModal(item.slug)}
               className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-white/50 hover:text-white transition-all duration-200 ring-1 ring-white/[0.08] hover:ring-white/[0.15]"
               aria-label="More info"
             >
@@ -157,7 +161,7 @@ function HoverPopup({ item }: { item: ContentListItem }) {
                 <circle cx="12" cy="12" r="10" />
                 <path d="M12 16v-4M12 8h.01" />
               </svg>
-            </Link>
+            </button>
           </div>
         </div>
 
