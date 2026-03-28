@@ -1,8 +1,5 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { toast } from 'sonner';
 import {
   adminCreateEpisode,
@@ -10,20 +7,6 @@ import {
   adminDeleteEpisode,
 } from '@/api/admin/content';
 import type { Episode } from '@/types/content';
-import { getMuxThumbnailUrl } from '@/lib/mux';
-
-const episodeSchema = z.object({
-  number: z.coerce.number().int().min(1, 'Required'),
-  title: z.string().min(1, 'Title is required'),
-  description: z.string().nullable().optional(),
-  duration: z.preprocess(
-    (v) => (v === '' || v === null || v === undefined ? null : Number(v)),
-    z.number().int().min(1).nullable().optional()
-  ),
-  playback_id: z.string().nullable().optional(),
-});
-
-type EpisodeFormValues = z.infer<typeof episodeSchema>;
 
 interface EpisodeListProps {
   seasonId: string;
@@ -39,12 +22,12 @@ export default function EpisodeList({ seasonId, episodes }: EpisodeListProps) {
     queryClient.invalidateQueries({ queryKey: ['admin-season-episodes', seasonId] });
 
   const createMutation = useMutation({
-    mutationFn: (data: EpisodeFormValues) =>
+    mutationFn: (data: EpisodeFormData) =>
       adminCreateEpisode(seasonId, {
         number: data.number,
         title: data.title,
-        description: data.description ?? null,
-        duration: data.duration ?? null,
+        description: null,
+        duration: data.duration || null,
         video: { playback_id: data.playback_id || null },
       }),
     onSuccess: () => {
@@ -56,12 +39,12 @@ export default function EpisodeList({ seasonId, episodes }: EpisodeListProps) {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: EpisodeFormValues }) =>
+    mutationFn: ({ id, data }: { id: string; data: EpisodeFormData }) =>
       adminUpdateEpisode(id, {
         number: data.number,
         title: data.title,
-        description: data.description ?? null,
-        duration: data.duration ?? null,
+        description: null,
+        duration: data.duration || null,
         video: { playback_id: data.playback_id || null },
       }),
     onSuccess: () => {
@@ -82,154 +65,185 @@ export default function EpisodeList({ seasonId, episodes }: EpisodeListProps) {
   });
 
   return (
-    <div className="mt-3 space-y-2 pl-4 border-l border-border">
+    <div className="flex flex-col gap-2">
+      {/* Column headers */}
+      <div className="grid grid-cols-[50px_1fr_1fr_1fr_36px] gap-3 px-4 text-[10px] font-semibold uppercase tracking-wider text-white/30">
+        <span className="text-center">#</span>
+        <span>Episode Title</span>
+        <span>Mux Playback ID</span>
+        <span>Duration (mins)</span>
+        <span />
+      </div>
+
+      {/* Episode rows */}
       {episodes.map((ep) => (
         <div key={ep.id}>
           {editingId === ep.id ? (
-            <InlineEpisodeForm
+            <EpisodeRow
               defaultValues={{
                 number: ep.number,
                 title: ep.title,
-                description: ep.description,
-                duration: ep.duration,
-                playback_id: ep.video?.playback_id,
+                playback_id: ep.video?.playback_id ?? '',
+                duration: ep.duration ?? null,
               }}
               onSubmit={(data) => updateMutation.mutate({ id: ep.id, data })}
               onCancel={() => setEditingId(null)}
               isSubmitting={updateMutation.isPending}
-              error={updateMutation.isError ? ((updateMutation.error as Error)?.message ?? 'Something went wrong') : undefined}
+              onDelete={() => {
+                if (!confirm(`Delete "${ep.title}"?`)) return;
+                deleteMutation.mutate(ep.id);
+              }}
             />
           ) : (
-            <div className="flex items-center gap-3 text-sm py-1">
-              <span className="text-muted-foreground w-6 text-right">{ep.number}.</span>
-              {ep.video?.playback_id && (
-                <img
-                  src={getMuxThumbnailUrl(ep.video.playback_id)}
-                  alt=""
-                  className="w-12 h-7 rounded object-cover border border-border"
-                />
-              )}
-              <span className="text-white flex-1">{ep.title}</span>
-              {ep.duration != null && (
-                <span className="text-muted-foreground text-xs">{ep.duration}m</span>
-              )}
-              <button
-                onClick={() => setEditingId(ep.id)}
-                className="text-xs text-primary hover:underline"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => {
-                  if (!confirm(`Delete "${ep.title}"?`)) return;
-                  deleteMutation.mutate(ep.id);
-                }}
-                className="text-xs text-destructive hover:underline"
-              >
-                Delete
-              </button>
+            <div className="grid grid-cols-[50px_1fr_1fr_1fr_36px] gap-3 items-center bg-[#0d0d0d] border border-[#1f1f1f] rounded-xl px-4 py-3">
+              <span className="text-center text-xs font-semibold text-primary">
+                E{String(ep.number).padStart(2, '0')}
+              </span>
+              <span className="text-sm text-white/80 truncate">{ep.title}</span>
+              <span className="text-xs text-white/30 font-mono truncate">
+                {ep.video?.playback_id || '—'}
+              </span>
+              <span className="text-xs text-white/40">
+                {ep.duration != null ? `${ep.duration} mins` : '—'}
+              </span>
+              <div className="flex gap-1">
+                <button
+                  onClick={() => setEditingId(ep.id)}
+                  className="text-[10px] text-white/30 hover:text-primary transition-colors"
+                  title="Edit"
+                >
+                  ✎
+                </button>
+                <button
+                  onClick={() => {
+                    if (!confirm(`Delete "${ep.title}"?`)) return;
+                    deleteMutation.mutate(ep.id);
+                  }}
+                  className="text-[10px] text-white/30 hover:text-red-400 transition-colors"
+                  title="Delete"
+                >
+                  ×
+                </button>
+              </div>
             </div>
           )}
         </div>
       ))}
 
+      {/* Add episode row */}
       {showAdd ? (
-        <InlineEpisodeForm
-          defaultValues={{ number: episodes.length + 1, title: '' }}
+        <EpisodeRow
+          defaultValues={{
+            number: episodes.length + 1,
+            title: '',
+            playback_id: '',
+            duration: null,
+          }}
           onSubmit={(data) => createMutation.mutate(data)}
           onCancel={() => setShowAdd(false)}
           isSubmitting={createMutation.isPending}
-          error={createMutation.isError ? ((createMutation.error as Error)?.message ?? 'Something went wrong') : undefined}
         />
       ) : (
         <button
+          type="button"
           onClick={() => setShowAdd(true)}
-          className="text-xs text-primary hover:underline mt-1"
+          className="px-4 py-2.5 rounded-xl border border-dashed border-primary/20 text-primary text-xs font-semibold hover:bg-primary/5 transition-colors"
         >
-          + Add episode
+          + Add Episode
         </button>
       )}
     </div>
   );
 }
 
-interface InlineEpisodeFormProps {
-  defaultValues: Partial<EpisodeFormValues>;
-  onSubmit: (data: EpisodeFormValues) => void;
-  onCancel: () => void;
-  isSubmitting: boolean;
-  error?: string;
+interface EpisodeFormData {
+  number: number;
+  title: string;
+  playback_id: string;
+  duration: number | null;
 }
 
-function InlineEpisodeForm({
-  defaultValues,
-  onSubmit,
-  onCancel,
-  isSubmitting,
-  error,
-}: InlineEpisodeFormProps) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<EpisodeFormValues>({
-    resolver: zodResolver(episodeSchema),
-    defaultValues: {
-      number: defaultValues.number ?? 1,
-      title: defaultValues.title ?? '',
-      description: defaultValues.description ?? '',
-      duration: defaultValues.duration ?? undefined,
-      playback_id: defaultValues.playback_id ?? '',
-    },
-  });
+interface EpisodeRowProps {
+  defaultValues: EpisodeFormData;
+  onSubmit: (data: EpisodeFormData) => void;
+  onCancel: () => void;
+  isSubmitting: boolean;
+  onDelete?: () => void;
+}
+
+function EpisodeRow({ defaultValues, onSubmit, onCancel, isSubmitting, onDelete }: EpisodeRowProps) {
+  const [number] = useState(defaultValues.number);
+  const [title, setTitle] = useState(defaultValues.title);
+  const [playbackId, setPlaybackId] = useState(defaultValues.playback_id);
+  const [duration, setDuration] = useState(defaultValues.duration?.toString() ?? '');
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!title.trim()) return;
+    onSubmit({
+      number,
+      title: title.trim(),
+      playback_id: playbackId.trim(),
+      duration: duration ? parseInt(duration) : null,
+    });
+  }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex items-start gap-2 py-1">
-      <div>
-        <input
-          {...register('number')}
-          type="number"
-          placeholder="#"
-          className="w-12 bg-card border border-border text-white rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-        />
-        {errors.number && <p className="text-destructive text-xs">{errors.number.message}</p>}
-      </div>
-      <div className="flex-1">
-        <input
-          {...register('title')}
-          placeholder="Episode title"
-          className="w-full bg-card border border-border text-white rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-        />
-        {errors.title && (
-          <p className="text-destructive text-xs">{errors.title.message}</p>
+    <form
+      onSubmit={handleSubmit}
+      className="grid grid-cols-[50px_1fr_1fr_1fr_36px] gap-3 items-center bg-[#0d0d0d] border border-primary/20 rounded-xl px-4 py-3"
+    >
+      <span className="text-center text-xs font-semibold text-primary">
+        E{String(number).padStart(2, '0')}
+      </span>
+      <input
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Episode title"
+        className="w-full bg-[#111] border border-[#1f1f1f] focus:border-primary/50 text-white text-sm rounded-lg px-3 py-2 outline-none transition-colors"
+      />
+      <input
+        value={playbackId}
+        onChange={(e) => setPlaybackId(e.target.value)}
+        placeholder="Mux Playback ID"
+        className="w-full bg-[#111] border border-[#1f1f1f] focus:border-primary/50 text-white text-sm rounded-lg px-3 py-2 outline-none transition-colors"
+      />
+      <input
+        value={duration}
+        onChange={(e) => setDuration(e.target.value)}
+        type="number"
+        placeholder="Duration (mins)"
+        className="w-full bg-[#111] border border-[#1f1f1f] focus:border-primary/50 text-white text-sm rounded-lg px-3 py-2 outline-none transition-colors"
+      />
+      <div className="flex flex-col gap-1">
+        <button
+          type="submit"
+          disabled={isSubmitting || !title.trim()}
+          className="text-[10px] text-primary hover:text-primary/80 disabled:opacity-30 transition-colors"
+          title="Save"
+        >
+          ✓
+        </button>
+        {onDelete ? (
+          <button
+            type="button"
+            onClick={onDelete}
+            className="text-[10px] text-red-400/60 hover:text-red-400 transition-colors"
+            title="Delete"
+          >
+            ×
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="text-[10px] text-white/30 hover:text-white/60 transition-colors"
+            title="Cancel"
+          >
+            ×
+          </button>
         )}
       </div>
-      <input
-        {...register('duration')}
-        type="number"
-        placeholder="min"
-        className="w-16 bg-card border border-border text-white rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-      />
-      <input
-        {...register('playback_id')}
-        placeholder="Mux ID"
-        className="w-24 bg-card border border-border text-white rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-      />
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="text-xs bg-primary text-white px-2 py-1 rounded disabled:opacity-50"
-      >
-        Save
-      </button>
-      <button
-        type="button"
-        onClick={onCancel}
-        className="text-xs text-muted-foreground hover:text-white px-1"
-      >
-        Cancel
-      </button>
-      {error && <p className="text-destructive text-xs">{error}</p>}
     </form>
   );
 }
