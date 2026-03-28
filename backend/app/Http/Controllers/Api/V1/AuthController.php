@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\ForgotPasswordRequest;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Resources\UserResource;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
@@ -67,6 +69,28 @@ class AuthController extends Controller
             'success' => true,
             'data' => new UserResource($request->user()),
             'message' => 'User retrieved successfully',
+        ]);
+    }
+
+    public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
+    {
+        $this->authService->forgotPassword($request->email);
+
+        return response()->json([
+            'success' => true,
+            'data' => null,
+            'message' => 'If that email exists, a reset link has been sent',
+        ]);
+    }
+
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
+    {
+        $this->authService->resetPassword($request->validated());
+
+        return response()->json([
+            'success' => true,
+            'data' => null,
+            'message' => 'Password reset successfully. Please log in.',
         ]);
     }
 }

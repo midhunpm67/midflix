@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 
 class AuthService
@@ -50,5 +52,40 @@ class AuthService
             'user' => $user,
             'token' => $token,
         ];
+    }
+
+    /**
+     * Send password reset link to email.
+     */
+    public function forgotPassword(string $email): void
+    {
+        $status = Password::sendResetLink(['email' => $email]);
+
+        if ($status !== Password::RESET_LINK_SENT) {
+            // Silently ignore unknown emails — prevents user enumeration
+            Log::info("Password reset attempted for unknown email: {$email}");
+        }
+    }
+
+    /**
+     * Reset user password and invalidate all tokens.
+     *
+     * @throws ValidationException
+     */
+    public function resetPassword(array $data): void
+    {
+        $status = Password::reset(
+            $data,
+            function (User $user, string $password) {
+                $user->forceFill(['password' => $password])->save();
+                $user->tokens()->delete();
+            }
+        );
+
+        if ($status !== Password::PASSWORD_RESET) {
+            throw ValidationException::withMessages([
+                'token' => ['This password reset token is invalid or expired.'],
+            ]);
+        }
     }
 }
