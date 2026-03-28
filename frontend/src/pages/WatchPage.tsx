@@ -52,29 +52,32 @@ export default function WatchPage() {
     mutationFn: saveWatchHistory,
   });
 
+  const saveMutateRef = useRef(saveMutation.mutate);
+  saveMutateRef.current = saveMutation.mutate;
+
   const saveProgress = useCallback(() => {
     if (!contentId || progressRef.current.duration === 0) return;
     const now = Date.now();
     if (now - lastSaveRef.current < SAVE_INTERVAL_MS) return;
     lastSaveRef.current = now;
-    saveMutation.mutate({
+    saveMutateRef.current({
       content_id: contentId,
       episode_id: watchEpisodeId,
       progress_seconds: Math.floor(progressRef.current.currentTime),
       duration_seconds: Math.floor(progressRef.current.duration),
     });
-  }, [contentId, watchEpisodeId, saveMutation]);
+  }, [contentId, watchEpisodeId]);
 
   const saveProgressForce = useCallback(() => {
     if (!contentId || progressRef.current.duration === 0) return;
     lastSaveRef.current = Date.now();
-    saveMutation.mutate({
+    saveMutateRef.current({
       content_id: contentId,
       episode_id: watchEpisodeId,
       progress_seconds: Math.floor(progressRef.current.currentTime),
       duration_seconds: Math.floor(progressRef.current.duration),
     });
-  }, [contentId, watchEpisodeId, saveMutation]);
+  }, [contentId, watchEpisodeId]);
 
   useEffect(() => {
     function handleBeforeUnload() {
@@ -238,7 +241,12 @@ function EpisodeRow({ episode, isActive, slug }: EpisodeRowProps) {
   );
 }
 
-function findSeasonForEpisode(seasons: Season[], episodeId: string | undefined): Season | undefined {
-  if (!episodeId || seasons.length === 0) return seasons[0];
+/**
+ * Returns the season containing the given episode. Currently defaults to the
+ * first season — sufficient because the Play button links to S1E1 and the
+ * episode list only shows same-season episodes. Multi-season navigation will
+ * require passing season_id through the URL in a future phase.
+ */
+function findSeasonForEpisode(seasons: Season[], _episodeId: string | undefined): Season | undefined {
   return seasons[0];
 }
