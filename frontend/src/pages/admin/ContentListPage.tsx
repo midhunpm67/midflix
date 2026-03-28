@@ -161,7 +161,7 @@ export default function ContentListPage() {
                       </td>
                       <td className="px-5 py-3.5 text-white/40 tabular-nums">{item.view_count.toLocaleString()}</td>
                       <td className="px-5 py-3.5">
-                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center justify-end gap-1">
                           <Link
                             to={`/admin/content/${item.id}`}
                             className="px-2.5 py-1 text-xs text-white/60 hover:text-white hover:bg-white/[0.06] rounded-md transition-colors"
