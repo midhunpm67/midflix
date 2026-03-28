@@ -4,24 +4,24 @@ import { useNavigate } from 'react-router-dom';
 import { getGenres } from '@/api/content';
 
 const GENRE_COLORS: Record<string, string> = {
-  action: 'bg-red-400/20 text-red-300',
-  adventure: 'bg-amber-400/20 text-amber-300',
-  animation: 'bg-violet-400/20 text-violet-300',
-  comedy: 'bg-yellow-400/20 text-yellow-300',
-  crime: 'bg-slate-400/20 text-slate-300',
-  documentary: 'bg-emerald-400/20 text-emerald-300',
-  drama: 'bg-blue-400/20 text-blue-300',
-  fantasy: 'bg-purple-400/20 text-purple-300',
-  horror: 'bg-zinc-400/20 text-zinc-300',
-  mystery: 'bg-indigo-400/20 text-indigo-300',
-  romance: 'bg-pink-400/20 text-pink-300',
-  'sci-fi': 'bg-cyan-400/20 text-cyan-300',
-  thriller: 'bg-orange-400/20 text-orange-300',
-  western: 'bg-amber-500/20 text-amber-300',
+  action: 'from-red-500/30 to-red-900/40 text-red-200',
+  adventure: 'from-amber-500/30 to-amber-900/40 text-amber-200',
+  animation: 'from-violet-500/30 to-violet-900/40 text-violet-200',
+  comedy: 'from-yellow-500/30 to-yellow-900/40 text-yellow-200',
+  crime: 'from-slate-400/30 to-slate-800/40 text-slate-200',
+  documentary: 'from-emerald-500/30 to-emerald-900/40 text-emerald-200',
+  drama: 'from-blue-500/30 to-blue-900/40 text-blue-200',
+  fantasy: 'from-purple-500/30 to-purple-900/40 text-purple-200',
+  horror: 'from-zinc-500/30 to-zinc-900/40 text-zinc-200',
+  mystery: 'from-indigo-500/30 to-indigo-900/40 text-indigo-200',
+  romance: 'from-pink-500/30 to-pink-900/40 text-pink-200',
+  'sci-fi': 'from-cyan-500/30 to-cyan-900/40 text-cyan-200',
+  thriller: 'from-orange-500/30 to-orange-900/40 text-orange-200',
+  western: 'from-amber-600/30 to-amber-950/40 text-amber-200',
 };
 
 function getColorForGenre(slug: string): string {
-  return GENRE_COLORS[slug] ?? 'bg-primary/20 text-primary';
+  return GENRE_COLORS[slug] ?? 'from-primary/30 to-primary/50 text-primary';
 }
 
 export default function GenreCards() {
@@ -85,9 +85,11 @@ export default function GenreCards() {
                 type="button"
                 onClick={() => navigate(`/browse?genre=${genre.id}`)}
                 style={{ scrollSnapAlign: 'start' }}
-                className={`flex-shrink-0 px-5 py-3 rounded-xl font-semibold text-sm whitespace-nowrap transition-all duration-200 hover:scale-105 hover:brightness-125 active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${colors}`}
+                className={`flex-shrink-0 w-[140px] sm:w-[150px] md:w-[160px] rounded-xl bg-gradient-to-br ring-1 ring-white/[0.06] transition-all duration-200 hover:scale-105 hover:ring-white/20 hover:brightness-110 active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${colors}`}
               >
-                {genre.name}
+                <div className="flex items-center justify-center h-20 sm:h-24">
+                  <span className="font-bold text-sm sm:text-base drop-shadow-sm">{genre.name}</span>
+                </div>
               </button>
             );
           })}
