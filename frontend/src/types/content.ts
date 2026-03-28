@@ -1,8 +1,8 @@
 export type ContentType = 'movie' | 'series';
 
 export interface VideoAsset {
-  hls_url: string | null;
-  status: 'pending' | 'processing' | 'ready' | 'error';
+  playback_id: string | null;
+  status: 'pending' | 'ready';
 }
 
 export interface Genre {
@@ -80,6 +80,7 @@ export interface CreateContentPayload {
   poster_url?: string | null;
   backdrop_url?: string | null;
   trailer_url?: string | null;
+  video?: { playback_id: string | null };
 }
 
 export type UpdateContentPayload = Partial<CreateContentPayload>;
@@ -98,6 +99,7 @@ export interface CreateEpisodePayload {
   description?: string | null;
   duration?: number | null;
   thumbnail_url?: string | null;
+  video?: { playback_id: string | null };
 }
 
 export type UpdateEpisodePayload = Partial<CreateEpisodePayload>;
