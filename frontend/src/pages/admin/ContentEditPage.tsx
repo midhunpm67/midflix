@@ -82,7 +82,7 @@ export default function ContentEditPage() {
 
       {!isNew && content?.type === 'series' && (
         <div className="mt-10">
-          <SeasonManager contentId={content.id} />
+          <SeasonManager contentId={content.id} slug={content.slug} />
         </div>
       )}
     </div>

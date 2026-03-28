@@ -6,6 +6,8 @@ import { MainLayout } from '@/layouts/MainLayout'
 import { AdminLayout } from '@/layouts/AdminLayout'
 import { LoginPage } from '@/pages/auth/LoginPage'
 import { RegisterPage } from '@/pages/auth/RegisterPage'
+import ContentListPage from '@/pages/admin/ContentListPage'
+import ContentEditPage from '@/pages/admin/ContentEditPage'
 
 // Placeholder pages — replaced in later phases
 const HomePage = () => <div className="p-8 text-white">Home — Phase 4</div>
@@ -56,6 +58,8 @@ export const router = createBrowserRouter([
         element: <AdminLayout />,
         children: [
           { path: '/admin', element: <AdminDashboard /> },
+          { path: '/admin/content', element: <ContentListPage /> },
+          { path: '/admin/content/:id', element: <ContentEditPage /> },
         ],
       },
     ],
