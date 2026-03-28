@@ -111,8 +111,29 @@ export default function ContentDetailPage() {
               </span>
             </>
           )}
+          {content.duration && (
+            <>
+              <span className="text-surface-variant">·</span>
+              <span>{Math.floor(content.duration / 60)}h {content.duration % 60}m</span>
+            </>
+          )}
+          {content.language && (
+            <>
+              <span className="text-surface-variant">·</span>
+              <span>{content.language}</span>
+            </>
+          )}
           <span className="text-surface-variant">·</span>
           <span className="capitalize">{content.type}</span>
+          {content.imdb_rating != null && (
+            <>
+              <span className="text-surface-variant">·</span>
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-amber-500/15 rounded text-xs font-bold text-amber-400">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                {content.imdb_rating}
+              </span>
+            </>
+          )}
           {genreNames.length > 0 && (
             <>
               <span className="text-surface-variant">·</span>
