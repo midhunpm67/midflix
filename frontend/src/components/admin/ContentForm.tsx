@@ -8,7 +8,10 @@ const contentSchema = z.object({
   description: z.string().min(1, 'Description is required'),
   type: z.enum(['movie', 'series']),
   director: z.string().nullable().optional(),
-  year: z.coerce.number().int().min(1888).max(2100).nullable().optional(),
+  year: z.preprocess(
+    (v) => (v === '' || v === null || v === undefined ? null : Number(v)),
+    z.number().int().min(1888).max(2100).nullable().optional()
+  ),
   rating: z.string().max(10).nullable().optional(),
   poster_url: z.string().url('Must be a valid URL').nullable().optional().or(z.literal('')),
   backdrop_url: z.string().url('Must be a valid URL').nullable().optional().or(z.literal('')),
@@ -52,6 +55,7 @@ export default function ContentForm({
   function handleFormSubmit(values: FormValues) {
     onSubmit({
       ...values,
+      year: values.year ?? null,
       poster_url: values.poster_url || null,
       backdrop_url: values.backdrop_url || null,
       trailer_url: values.trailer_url || null,
@@ -63,8 +67,9 @@ export default function ContentForm({
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5 max-w-2xl">
       <div>
-        <label className="block text-sm text-muted-foreground mb-1">Title *</label>
+        <label htmlFor="title" className="block text-sm text-muted-foreground mb-1">Title *</label>
         <input
+          id="title"
           {...register('title')}
           className="w-full bg-card border border-border text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
@@ -72,8 +77,9 @@ export default function ContentForm({
       </div>
 
       <div>
-        <label className="block text-sm text-muted-foreground mb-1">Type *</label>
+        <label htmlFor="type" className="block text-sm text-muted-foreground mb-1">Type *</label>
         <select
+          id="type"
           {...register('type')}
           className="w-full bg-card border border-border text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         >
@@ -83,8 +89,9 @@ export default function ContentForm({
       </div>
 
       <div>
-        <label className="block text-sm text-muted-foreground mb-1">Description *</label>
+        <label htmlFor="description" className="block text-sm text-muted-foreground mb-1">Description *</label>
         <textarea
+          id="description"
           {...register('description')}
           rows={4}
           className="w-full bg-card border border-border text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
@@ -94,15 +101,17 @@ export default function ContentForm({
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm text-muted-foreground mb-1">Director</label>
+          <label htmlFor="director" className="block text-sm text-muted-foreground mb-1">Director</label>
           <input
+            id="director"
             {...register('director')}
             className="w-full bg-card border border-border text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
         <div>
-          <label className="block text-sm text-muted-foreground mb-1">Year</label>
+          <label htmlFor="year" className="block text-sm text-muted-foreground mb-1">Year</label>
           <input
+            id="year"
             {...register('year')}
             type="number"
             className="w-full bg-card border border-border text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
@@ -112,16 +121,18 @@ export default function ContentForm({
       </div>
 
       <div>
-        <label className="block text-sm text-muted-foreground mb-1">Rating (e.g. PG-13)</label>
+        <label htmlFor="rating" className="block text-sm text-muted-foreground mb-1">Rating (e.g. PG-13)</label>
         <input
+          id="rating"
           {...register('rating')}
           className="w-full bg-card border border-border text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
 
       <div>
-        <label className="block text-sm text-muted-foreground mb-1">Poster URL</label>
+        <label htmlFor="poster_url" className="block text-sm text-muted-foreground mb-1">Poster URL</label>
         <input
+          id="poster_url"
           {...register('poster_url')}
           type="url"
           className="w-full bg-card border border-border text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
@@ -130,8 +141,9 @@ export default function ContentForm({
       </div>
 
       <div>
-        <label className="block text-sm text-muted-foreground mb-1">Backdrop URL</label>
+        <label htmlFor="backdrop_url" className="block text-sm text-muted-foreground mb-1">Backdrop URL</label>
         <input
+          id="backdrop_url"
           {...register('backdrop_url')}
           type="url"
           className="w-full bg-card border border-border text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
@@ -140,8 +152,9 @@ export default function ContentForm({
       </div>
 
       <div>
-        <label className="block text-sm text-muted-foreground mb-1">Trailer URL</label>
+        <label htmlFor="trailer_url" className="block text-sm text-muted-foreground mb-1">Trailer URL</label>
         <input
+          id="trailer_url"
           {...register('trailer_url')}
           type="url"
           className="w-full bg-card border border-border text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"

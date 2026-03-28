@@ -71,12 +71,14 @@ export default function ContentEditPage() {
         </div>
       )}
 
-      <ContentForm
-        defaultValues={content}
-        onSubmit={handleSubmit}
-        isSubmitting={isSubmitting}
-        submitLabel={isNew ? 'Create' : 'Update'}
-      />
+      {(isNew || content) && (
+        <ContentForm
+          defaultValues={content}
+          onSubmit={handleSubmit}
+          isSubmitting={isSubmitting}
+          submitLabel={isNew ? 'Create' : 'Update'}
+        />
+      )}
 
       {!isNew && content?.type === 'series' && (
         <div className="mt-10">
