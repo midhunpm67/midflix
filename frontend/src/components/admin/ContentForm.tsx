@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useQuery } from '@tanstack/react-query';
+import { getGenres } from '@/api/content';
 import type { Content, CreateContentPayload } from '@/types/content';
 import { getMuxThumbnailUrl } from '@/lib/mux';
 
@@ -9,15 +11,17 @@ const contentSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().min(1, 'Description is required'),
   type: z.enum(['movie', 'series']),
+  genre_ids: z.array(z.string()).optional(),
+  cast_text: z.string().optional(),
   director: z.string().nullable().optional(),
   year: z.preprocess(
     (v) => (v === '' || v === null || v === undefined ? null : Number(v)),
     z.number().int().min(1888).max(2100).nullable().optional()
   ),
   rating: z.enum(['G', 'PG', 'PG-13', 'R', 'NC-17', 'TV-MA', 'TV-14', 'TV-PG', 'TV-G', 'TV-Y', '']).transform((v) => v === '' ? null : v).nullable().optional(),
-  poster_url: z.string().url('Must be a valid URL').nullable().optional().or(z.literal('')),
-  backdrop_url: z.string().url('Must be a valid URL').nullable().optional().or(z.literal('')),
-  trailer_url: z.string().url('Must be a valid URL').nullable().optional().or(z.literal('')),
+  poster_url: z.string().nullable().optional(),
+  backdrop_url: z.string().nullable().optional(),
+  trailer_url: z.string().nullable().optional(),
   playback_id: z.string().nullable().optional(),
 });
 
@@ -36,10 +40,16 @@ export default function ContentForm({
   isSubmitting,
   submitLabel = 'Save',
 }: ContentFormProps) {
+  const { data: genres = [] } = useQuery({
+    queryKey: ['genres'],
+    queryFn: getGenres,
+  });
+
   const {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(contentSchema),
@@ -47,6 +57,8 @@ export default function ContentForm({
       title: defaultValues?.title ?? '',
       description: defaultValues?.description ?? '',
       type: defaultValues?.type ?? 'movie',
+      genre_ids: defaultValues?.genre_ids ?? [],
+      cast_text: defaultValues?.cast?.join(', ') ?? '',
       director: defaultValues?.director ?? '',
       year: defaultValues?.year ?? undefined,
       rating: (defaultValues?.rating ?? '') as FormValues['rating'],
@@ -58,23 +70,40 @@ export default function ContentForm({
   });
 
   const watchedPlaybackId = watch('playback_id');
+  const selectedGenres = watch('genre_ids') ?? [];
   const [thumbnailError, setThumbnailError] = useState(false);
 
+  function toggleGenre(genreId: string) {
+    const current = selectedGenres;
+    const updated = current.includes(genreId)
+      ? current.filter((id) => id !== genreId)
+      : [...current, genreId];
+    setValue('genre_ids', updated);
+  }
+
   function handleFormSubmit(values: FormValues) {
+    const castArray = values.cast_text
+      ? values.cast_text.split(',').map((s) => s.trim()).filter(Boolean)
+      : [];
+
     onSubmit({
-      ...values,
+      title: values.title,
+      description: values.description,
+      type: values.type,
+      genre_ids: values.genre_ids ?? [],
+      cast: castArray,
+      director: values.director || null,
       year: values.year ?? null,
+      rating: values.rating || null,
       poster_url: values.poster_url || null,
       backdrop_url: values.backdrop_url || null,
       trailer_url: values.trailer_url || null,
-      director: values.director || null,
-      rating: values.rating || null,
       video: { playback_id: values.playback_id || null },
     });
   }
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-5 max-w-2xl">
+    <form onSubmit={handleSubmit(handleFormSubmit)} noValidate className="space-y-5 max-w-2xl">
       <div>
         <label htmlFor="title" className="block text-sm text-muted-foreground mb-1">Title *</label>
         <input
@@ -106,6 +135,30 @@ export default function ContentForm({
           className="w-full bg-card border border-border text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
         />
         {errors.description && <p className="text-destructive text-xs mt-1">{errors.description.message}</p>}
+      </div>
+
+      {/* Genres */}
+      <div>
+        <label className="block text-sm text-muted-foreground mb-2">Genres</label>
+        <div className="flex flex-wrap gap-2">
+          {genres.map((genre) => {
+            const isSelected = selectedGenres.includes(genre.id);
+            return (
+              <button
+                key={genre.id}
+                type="button"
+                onClick={() => toggleGenre(genre.id)}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                  isSelected
+                    ? 'bg-primary text-white'
+                    : 'bg-card border border-border text-muted-foreground hover:text-white'
+                }`}
+              >
+                {genre.name}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -150,12 +203,24 @@ export default function ContentForm({
         </select>
       </div>
 
+      {/* Cast */}
+      <div>
+        <label htmlFor="cast_text" className="block text-sm text-muted-foreground mb-1">Cast</label>
+        <input
+          id="cast_text"
+          {...register('cast_text')}
+          placeholder="e.g. Tom Hanks, Morgan Freeman, Tim Robbins"
+          className="w-full bg-card border border-border text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+        />
+        <p className="text-muted-foreground text-xs mt-1">Comma-separated names</p>
+      </div>
+
       <div>
         <label htmlFor="poster_url" className="block text-sm text-muted-foreground mb-1">Poster URL</label>
         <input
           id="poster_url"
           {...register('poster_url')}
-          type="url"
+          placeholder="https://example.com/poster.jpg"
           className="w-full bg-card border border-border text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
         {errors.poster_url && <p className="text-destructive text-xs mt-1">{errors.poster_url.message}</p>}
@@ -166,7 +231,7 @@ export default function ContentForm({
         <input
           id="backdrop_url"
           {...register('backdrop_url')}
-          type="url"
+          placeholder="https://example.com/backdrop.jpg"
           className="w-full bg-card border border-border text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
         {errors.backdrop_url && <p className="text-destructive text-xs mt-1">{errors.backdrop_url.message}</p>}
@@ -177,7 +242,7 @@ export default function ContentForm({
         <input
           id="trailer_url"
           {...register('trailer_url')}
-          type="url"
+          placeholder="https://example.com/trailer.mp4"
           className="w-full bg-card border border-border text-white rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
         {errors.trailer_url && <p className="text-destructive text-xs mt-1">{errors.trailer_url.message}</p>}
