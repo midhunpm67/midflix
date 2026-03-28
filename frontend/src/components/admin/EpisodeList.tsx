@@ -163,12 +163,15 @@ function InlineEpisodeForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex items-start gap-2 py-1">
-      <input
-        {...register('number')}
-        type="number"
-        placeholder="#"
-        className="w-12 bg-card border border-border text-white rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-      />
+      <div>
+        <input
+          {...register('number')}
+          type="number"
+          placeholder="#"
+          className="w-12 bg-card border border-border text-white rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+        />
+        {errors.number && <p className="text-destructive text-xs">{errors.number.message}</p>}
+      </div>
       <div className="flex-1">
         <input
           {...register('title')}
