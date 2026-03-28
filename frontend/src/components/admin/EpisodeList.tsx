@@ -9,6 +9,7 @@ import {
   adminDeleteEpisode,
 } from '@/api/admin/content';
 import type { Episode } from '@/types/content';
+import { getMuxThumbnailUrl } from '@/lib/mux';
 
 const episodeSchema = z.object({
   number: z.coerce.number().int().min(1, 'Required'),
@@ -18,6 +19,7 @@ const episodeSchema = z.object({
     (v) => (v === '' || v === null || v === undefined ? null : Number(v)),
     z.number().int().min(1).nullable().optional()
   ),
+  playback_id: z.string().nullable().optional(),
 });
 
 type EpisodeFormValues = z.infer<typeof episodeSchema>;
@@ -42,6 +44,7 @@ export default function EpisodeList({ seasonId, episodes }: EpisodeListProps) {
         title: data.title,
         description: data.description ?? null,
         duration: data.duration ?? null,
+        video: { playback_id: data.playback_id || null },
       }),
     onSuccess: () => {
       invalidate();
@@ -56,6 +59,7 @@ export default function EpisodeList({ seasonId, episodes }: EpisodeListProps) {
         title: data.title,
         description: data.description ?? null,
         duration: data.duration ?? null,
+        video: { playback_id: data.playback_id || null },
       }),
     onSuccess: () => {
       invalidate();
@@ -79,6 +83,7 @@ export default function EpisodeList({ seasonId, episodes }: EpisodeListProps) {
                 title: ep.title,
                 description: ep.description,
                 duration: ep.duration,
+                playback_id: ep.video?.playback_id,
               }}
               onSubmit={(data) => updateMutation.mutate({ id: ep.id, data })}
               onCancel={() => setEditingId(null)}
@@ -88,6 +93,13 @@ export default function EpisodeList({ seasonId, episodes }: EpisodeListProps) {
           ) : (
             <div className="flex items-center gap-3 text-sm py-1">
               <span className="text-muted-foreground w-6 text-right">{ep.number}.</span>
+              {ep.video?.playback_id && (
+                <img
+                  src={getMuxThumbnailUrl(ep.video.playback_id)}
+                  alt=""
+                  className="w-12 h-7 rounded object-cover border border-border"
+                />
+              )}
               <span className="text-white flex-1">{ep.title}</span>
               {ep.duration != null && (
                 <span className="text-muted-foreground text-xs">{ep.duration}m</span>
@@ -158,6 +170,7 @@ function InlineEpisodeForm({
       title: defaultValues.title ?? '',
       description: defaultValues.description ?? '',
       duration: defaultValues.duration ?? undefined,
+      playback_id: defaultValues.playback_id ?? '',
     },
   });
 
@@ -187,6 +200,11 @@ function InlineEpisodeForm({
         type="number"
         placeholder="min"
         className="w-16 bg-card border border-border text-white rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+      />
+      <input
+        {...register('playback_id')}
+        placeholder="Mux ID"
+        className="w-24 bg-card border border-border text-white rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
       />
       <button
         type="submit"
