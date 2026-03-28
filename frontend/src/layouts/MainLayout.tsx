@@ -12,6 +12,9 @@ export function MainLayout() {
             <Link to="/" className="text-sm text-white/70 hover:text-white transition-colors">
               Home
             </Link>
+            <Link to="/browse" className="text-sm text-white/70 hover:text-white transition-colors">
+              Browse
+            </Link>
           </div>
         </div>
       </nav>

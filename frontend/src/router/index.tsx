@@ -11,9 +11,9 @@ import ContentEditPage from '@/pages/admin/ContentEditPage'
 import HomePage from '@/pages/HomePage'
 import ContentDetailPage from '@/pages/ContentDetailPage'
 import WatchPage from '@/pages/WatchPage'
+import BrowsePage from '@/pages/BrowsePage'
 
 // Placeholder pages — replaced in later phases
-const BrowsePage = () => <div className="p-8 text-white">Browse — Phase 6</div>
 const SubscriptionPage = () => <div className="p-8 text-white">Subscription — Phase 7</div>
 const AdminDashboard = () => <div className="p-8 text-white">Admin — Phase 2</div>
 
