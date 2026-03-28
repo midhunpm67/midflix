@@ -27,7 +27,7 @@ export default function HomePage() {
         />
         <CarouselRow
           title="New Releases"
-          items={newReleases}
+          items={newReleases.slice(1)}
           isLoading={loadingNew}
         />
       </div>

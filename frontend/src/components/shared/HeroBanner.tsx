@@ -57,15 +57,15 @@ export default function HeroBanner({ content, isLoading }: HeroBannerProps) {
             <span className="capitalize">{content.type}</span>
           </div>
           <div className="flex items-center gap-3 mt-5">
-            <Link
-              to={`/watch/${content.slug}`}
-              className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded font-semibold text-sm transition-colors"
+            <button
+              disabled
+              className="flex items-center gap-2 bg-primary/50 text-white/70 px-6 py-2.5 rounded font-semibold text-sm cursor-not-allowed focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
             >
               <span>&#9654;</span> Play
-            </Link>
+            </button>
             <Link
               to={`/content/${content.slug}`}
-              className="flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-5 py-2.5 rounded font-medium text-sm transition-colors"
+              className="flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white px-5 py-2.5 rounded font-medium text-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
             >
               &#9432; More Info
             </Link>

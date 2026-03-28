@@ -43,7 +43,7 @@ export default function CarouselRow({ title, items, isLoading = false }: Carouse
         {canScrollLeft && (
           <button
             onClick={() => scroll('left')}
-            className="absolute left-1 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-opacity opacity-0 group-hover/carousel:opacity-100 hidden md:flex"
+            className="absolute left-1 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-opacity opacity-0 group-hover/carousel:opacity-100 hidden md:flex focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
             aria-label="Scroll left"
           >
             &#8249;
@@ -75,7 +75,7 @@ export default function CarouselRow({ title, items, isLoading = false }: Carouse
         {canScrollRight && (
           <button
             onClick={() => scroll('right')}
-            className="absolute right-1 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-opacity opacity-0 group-hover/carousel:opacity-100 hidden md:flex"
+            className="absolute right-1 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-opacity opacity-0 group-hover/carousel:opacity-100 hidden md:flex focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
             aria-label="Scroll right"
           >
             &#8250;

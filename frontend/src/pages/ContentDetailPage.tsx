@@ -98,12 +98,12 @@ export default function ContentDetailPage() {
         </div>
 
         <div className="mt-5">
-          <Link
-            to={`/watch/${content.slug}`}
-            className="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-6 py-2.5 rounded font-semibold text-sm transition-colors"
+          <button
+            disabled
+            className="inline-flex items-center gap-2 bg-primary/50 text-white/70 px-6 py-2.5 rounded font-semibold text-sm cursor-not-allowed focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
           >
             <span>&#9654;</span> Play
-          </Link>
+          </button>
         </div>
 
         <p className="text-white/80 text-sm leading-relaxed mt-6">{content.description}</p>
@@ -157,7 +157,8 @@ function SeasonAccordion({ season, defaultOpen }: SeasonAccordionProps) {
     <div className="border border-surface-variant rounded overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-surface hover:bg-surface-variant/50 transition-colors text-left"
+        aria-expanded={open}
+        className="w-full flex items-center justify-between px-4 py-3 bg-surface hover:bg-surface-variant/50 transition-colors text-left focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
       >
         <span className="text-white text-sm font-medium">
           Season {season.number}{season.title ? ` — ${season.title}` : ''}
