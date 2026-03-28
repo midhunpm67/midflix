@@ -11,12 +11,13 @@ import type { Episode } from '@/types/content';
 interface EpisodeListProps {
   seasonId: string;
   episodes: Episode[];
+  showAdd: boolean;
+  onAddDone: () => void;
 }
 
-export default function EpisodeList({ seasonId, episodes }: EpisodeListProps) {
+export default function EpisodeList({ seasonId, episodes, showAdd, onAddDone }: EpisodeListProps) {
   const queryClient = useQueryClient();
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [showAdd, setShowAdd] = useState(false);
 
   const invalidate = () =>
     queryClient.invalidateQueries({ queryKey: ['admin-season-episodes', seasonId] });
@@ -32,7 +33,7 @@ export default function EpisodeList({ seasonId, episodes }: EpisodeListProps) {
       }),
     onSuccess: () => {
       invalidate();
-      setShowAdd(false);
+      onAddDone();
       toast.success('Episode created');
     },
     onError: () => toast.error('Failed to create episode'),
@@ -67,13 +68,15 @@ export default function EpisodeList({ seasonId, episodes }: EpisodeListProps) {
   return (
     <div className="flex flex-col gap-2">
       {/* Column headers */}
-      <div className="grid grid-cols-[50px_1fr_1fr_1fr_36px] gap-3 px-4 text-[10px] font-semibold uppercase tracking-wider text-white/30">
-        <span className="text-center">#</span>
-        <span>Episode Title</span>
-        <span>Mux Playback ID</span>
-        <span>Duration (mins)</span>
-        <span />
-      </div>
+      {(episodes.length > 0 || showAdd) && (
+        <div className="grid grid-cols-[50px_1fr_1fr_1fr_36px] gap-3 px-4 text-[10px] font-semibold uppercase tracking-wider text-white/30">
+          <span className="text-center">#</span>
+          <span>Episode Title</span>
+          <span>Mux Playback ID</span>
+          <span>Duration (mins)</span>
+          <span />
+        </div>
+      )}
 
       {/* Episode rows */}
       {episodes.map((ep) => (
@@ -106,23 +109,23 @@ export default function EpisodeList({ seasonId, episodes }: EpisodeListProps) {
               <span className="text-xs text-white/40">
                 {ep.duration != null ? `${ep.duration} mins` : '—'}
               </span>
-              <div className="flex gap-1">
+              <div className="flex gap-1 justify-end">
                 <button
                   onClick={() => setEditingId(ep.id)}
-                  className="text-[10px] text-white/30 hover:text-primary transition-colors"
+                  className="w-7 h-7 rounded-md flex items-center justify-center text-white/30 hover:text-primary hover:bg-primary/10 transition-colors"
                   title="Edit"
                 >
-                  ✎
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                 </button>
                 <button
                   onClick={() => {
                     if (!confirm(`Delete "${ep.title}"?`)) return;
                     deleteMutation.mutate(ep.id);
                   }}
-                  className="text-[10px] text-white/30 hover:text-red-400 transition-colors"
+                  className="w-7 h-7 rounded-md flex items-center justify-center text-white/30 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                   title="Delete"
                 >
-                  ×
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
                 </button>
               </div>
             </div>
@@ -130,8 +133,8 @@ export default function EpisodeList({ seasonId, episodes }: EpisodeListProps) {
         </div>
       ))}
 
-      {/* Add episode row */}
-      {showAdd ? (
+      {/* Add episode row (triggered from parent) */}
+      {showAdd && (
         <EpisodeRow
           defaultValues={{
             number: episodes.length + 1,
@@ -140,17 +143,14 @@ export default function EpisodeList({ seasonId, episodes }: EpisodeListProps) {
             duration: null,
           }}
           onSubmit={(data) => createMutation.mutate(data)}
-          onCancel={() => setShowAdd(false)}
+          onCancel={onAddDone}
           isSubmitting={createMutation.isPending}
         />
-      ) : (
-        <button
-          type="button"
-          onClick={() => setShowAdd(true)}
-          className="px-4 py-2.5 rounded-xl border border-dashed border-primary/20 text-primary text-xs font-semibold hover:bg-primary/5 transition-colors"
-        >
-          + Add Episode
-        </button>
+      )}
+
+      {/* Empty state */}
+      {episodes.length === 0 && !showAdd && (
+        <p className="text-white/20 text-xs py-2">No episodes yet. Click "+ Add Episode" above to add one.</p>
       )}
     </div>
   );
@@ -200,49 +200,41 @@ function EpisodeRow({ defaultValues, onSubmit, onCancel, isSubmitting, onDelete 
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Episode title"
-        className="w-full bg-[#111] border border-[#1f1f1f] focus:border-primary/50 text-white text-sm rounded-lg px-3 py-2 outline-none transition-colors"
+        autoFocus
+        className="w-full bg-[#111] border border-[#1f1f1f] focus:border-primary/50 text-white text-sm rounded-lg px-3 py-2 outline-none transition-colors placeholder:text-white/20"
       />
       <input
         value={playbackId}
         onChange={(e) => setPlaybackId(e.target.value)}
         placeholder="Mux Playback ID"
-        className="w-full bg-[#111] border border-[#1f1f1f] focus:border-primary/50 text-white text-sm rounded-lg px-3 py-2 outline-none transition-colors"
+        className="w-full bg-[#111] border border-[#1f1f1f] focus:border-primary/50 text-white text-sm rounded-lg px-3 py-2 outline-none transition-colors placeholder:text-white/20"
       />
       <input
         value={duration}
         onChange={(e) => setDuration(e.target.value)}
         type="number"
         placeholder="Duration (mins)"
-        className="w-full bg-[#111] border border-[#1f1f1f] focus:border-primary/50 text-white text-sm rounded-lg px-3 py-2 outline-none transition-colors"
+        className="w-full bg-[#111] border border-[#1f1f1f] focus:border-primary/50 text-white text-sm rounded-lg px-3 py-2 outline-none transition-colors placeholder:text-white/20"
       />
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-0.5 items-center">
         <button
           type="submit"
           disabled={isSubmitting || !title.trim()}
-          className="text-[10px] text-primary hover:text-primary/80 disabled:opacity-30 transition-colors"
+          className="w-7 h-7 rounded-md flex items-center justify-center text-primary hover:bg-primary/10 disabled:opacity-30 transition-colors"
           title="Save"
         >
-          ✓
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
         </button>
-        {onDelete ? (
-          <button
-            type="button"
-            onClick={onDelete}
-            className="text-[10px] text-red-400/60 hover:text-red-400 transition-colors"
-            title="Delete"
-          >
-            ×
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={onCancel}
-            className="text-[10px] text-white/30 hover:text-white/60 transition-colors"
-            title="Cancel"
-          >
-            ×
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={onDelete ?? onCancel}
+          className={`w-7 h-7 rounded-md flex items-center justify-center transition-colors ${
+            onDelete ? 'text-red-400/60 hover:text-red-400 hover:bg-red-500/10' : 'text-white/30 hover:text-white/60 hover:bg-white/5'
+          }`}
+          title={onDelete ? 'Delete' : 'Cancel'}
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
       </div>
     </form>
   );
