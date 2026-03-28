@@ -69,6 +69,7 @@ export default function ContentListPage() {
                   <th className="px-4 py-3">Type</th>
                   <th className="px-4 py-3">Year</th>
                   <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3">Video</th>
                   <th className="px-4 py-3">Views</th>
                   <th className="px-4 py-3">Actions</th>
                 </tr>
@@ -76,7 +77,7 @@ export default function ContentListPage() {
               <tbody className="divide-y divide-border">
                 {data.items.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground text-sm">
+                    <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground text-sm">
                       No content found.
                     </td>
                   </tr>
@@ -102,6 +103,20 @@ export default function ContentListPage() {
                           }`}
                         >
                           {item.is_published ? 'Published' : 'Draft'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex items-center gap-1.5 text-xs ${
+                          item.video?.status === 'ready'
+                            ? 'text-green-400'
+                            : 'text-muted-foreground'
+                        }`}>
+                          <span className={`w-2 h-2 rounded-full ${
+                            item.video?.status === 'ready'
+                              ? 'bg-green-400'
+                              : 'bg-muted-foreground'
+                          }`} />
+                          {item.video?.status === 'ready' ? 'Ready' : 'Pending'}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-muted-foreground">{item.view_count.toLocaleString()}</td>

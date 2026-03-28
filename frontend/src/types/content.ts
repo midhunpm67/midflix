@@ -23,6 +23,7 @@ export interface ContentListItem {
   genre_ids: string[];
   is_published: boolean;
   view_count: number;
+  video: VideoAsset | null;
   published_at: string | null;
   created_at: string;
 }
