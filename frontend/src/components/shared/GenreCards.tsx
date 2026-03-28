@@ -1,31 +1,34 @@
+import { useRef, useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { getGenres, browseContent } from '@/api/content';
-import type { Genre } from '@/types/content';
+import { getGenres } from '@/api/content';
 
 const GENRE_COLORS: Record<string, string> = {
-  action: 'from-red-600/80 to-red-900/60',
-  adventure: 'from-amber-600/80 to-amber-900/60',
-  animation: 'from-violet-500/80 to-violet-800/60',
-  comedy: 'from-yellow-500/80 to-yellow-800/60',
-  crime: 'from-slate-600/80 to-slate-900/60',
-  documentary: 'from-emerald-600/80 to-emerald-900/60',
-  drama: 'from-blue-600/80 to-blue-900/60',
-  fantasy: 'from-purple-500/80 to-purple-800/60',
-  horror: 'from-zinc-700/80 to-zinc-900/60',
-  mystery: 'from-indigo-600/80 to-indigo-900/60',
-  romance: 'from-pink-500/80 to-pink-800/60',
-  'sci-fi': 'from-cyan-600/80 to-cyan-900/60',
-  thriller: 'from-orange-600/80 to-orange-900/60',
-  western: 'from-amber-700/80 to-amber-950/60',
+  action: 'bg-red-400/20 text-red-300',
+  adventure: 'bg-amber-400/20 text-amber-300',
+  animation: 'bg-violet-400/20 text-violet-300',
+  comedy: 'bg-yellow-400/20 text-yellow-300',
+  crime: 'bg-slate-400/20 text-slate-300',
+  documentary: 'bg-emerald-400/20 text-emerald-300',
+  drama: 'bg-blue-400/20 text-blue-300',
+  fantasy: 'bg-purple-400/20 text-purple-300',
+  horror: 'bg-zinc-400/20 text-zinc-300',
+  mystery: 'bg-indigo-400/20 text-indigo-300',
+  romance: 'bg-pink-400/20 text-pink-300',
+  'sci-fi': 'bg-cyan-400/20 text-cyan-300',
+  thriller: 'bg-orange-400/20 text-orange-300',
+  western: 'bg-amber-500/20 text-amber-300',
 };
 
 function getColorForGenre(slug: string): string {
-  return GENRE_COLORS[slug] ?? 'from-primary/60 to-primary/30';
+  return GENRE_COLORS[slug] ?? 'bg-primary/20 text-primary';
 }
 
 export default function GenreCards() {
   const navigate = useNavigate();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
   const { data: genres = [] } = useQuery({
     queryKey: ['genres'],
@@ -33,69 +36,71 @@ export default function GenreCards() {
     staleTime: 60000,
   });
 
-  const { data: contentData } = useQuery({
-    queryKey: ['browse-all'],
-    queryFn: () => browseContent({ page: 1 }),
-    staleTime: 60000,
-  });
-
-  const allContent = contentData?.items ?? [];
-
-  function getImageForGenre(genre: Genre): string | null {
-    const match = allContent.find((item) =>
-      item.genre_ids.includes(genre.id) && (item.backdrop_url || item.poster_url)
-    );
-    return match?.backdrop_url ?? match?.poster_url ?? null;
+  function updateScrollState() {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 0);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
   }
 
-  function handleClick(genreId: string) {
-    navigate(`/browse?genre=${genreId}`);
+  useEffect(() => {
+    updateScrollState();
+  }, [genres]);
+
+  function scroll(direction: 'left' | 'right') {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({
+      left: direction === 'left' ? -el.clientWidth * 0.8 : el.clientWidth * 0.8,
+      behavior: 'smooth',
+    });
   }
 
   if (genres.length === 0) return null;
 
   return (
-    <section className="px-5 md:px-10 mb-8">
-      <h2 className="text-white text-base font-bold mb-4">Popular Genres</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-2">
-        {genres.map((genre) => {
-          const image = getImageForGenre(genre);
-          const colors = getColorForGenre(genre.slug);
-
-          return (
-            <button
-              key={genre.id}
-              type="button"
-              onClick={() => handleClick(genre.id)}
-              className="relative aspect-[16/9] rounded-xl overflow-hidden group cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
-            >
-              {/* Background image */}
-              {image ? (
-                <img
-                  src={image}
-                  alt=""
-                  className="absolute inset-0 w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110"
-                />
-              ) : (
-                <div className="absolute inset-0 bg-surface" />
-              )}
-
-              {/* Color overlay */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${colors} mix-blend-multiply`} />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-
-              {/* Genre name */}
-              <div className="absolute inset-0 flex items-end p-3">
-                <span className="text-white font-bold text-sm drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                  {genre.name}
-                </span>
-              </div>
-
-              {/* Hover border */}
-              <div className="absolute inset-0 rounded-xl ring-0 group-hover:ring-2 ring-white/40 transition-all duration-300 pointer-events-none" />
-            </button>
-          );
-        })}
+    <section className="mb-6">
+      <h2 className="text-white text-base font-bold mb-3 px-5 md:px-10">Popular Genres</h2>
+      <div className="group/carousel relative">
+        {canScrollLeft && (
+          <button
+            onClick={() => scroll('left')}
+            className="absolute left-0 top-0 bottom-0 z-10 w-12 bg-gradient-to-r from-background/90 to-transparent flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity hidden md:flex focus-visible:outline-none"
+            aria-label="Scroll left"
+          >
+            <span className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white text-lg transition-colors">&#8249;</span>
+          </button>
+        )}
+        <div
+          ref={scrollRef}
+          onScroll={updateScrollState}
+          className="flex gap-2 overflow-x-auto px-5 md:px-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          style={{ scrollSnapType: 'x mandatory' }}
+        >
+          {genres.map((genre) => {
+            const colors = getColorForGenre(genre.slug);
+            return (
+              <button
+                key={genre.id}
+                type="button"
+                onClick={() => navigate(`/browse?genre=${genre.id}`)}
+                style={{ scrollSnapAlign: 'start' }}
+                className={`flex-shrink-0 px-5 py-3 rounded-xl font-semibold text-sm whitespace-nowrap transition-all duration-200 hover:scale-105 hover:brightness-125 active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${colors}`}
+              >
+                {genre.name}
+              </button>
+            );
+          })}
+        </div>
+        {canScrollRight && (
+          <button
+            onClick={() => scroll('right')}
+            className="absolute right-0 top-0 bottom-0 z-10 w-12 bg-gradient-to-l from-background/90 to-transparent flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity hidden md:flex focus-visible:outline-none"
+            aria-label="Scroll right"
+          >
+            <span className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white text-lg transition-colors">&#8250;</span>
+          </button>
+        )}
       </div>
     </section>
   );
