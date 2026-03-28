@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { ProtectedRoute } from './ProtectedRoute'
 import { GuestRoute } from './GuestRoute'
+import { RootLayout } from '@/layouts/RootLayout'
 import { AuthLayout } from '@/layouts/AuthLayout'
 import { MainLayout } from '@/layouts/MainLayout'
 import { AdminLayout } from '@/layouts/AdminLayout'
@@ -18,54 +19,59 @@ const SubscriptionPage = () => <div className="p-8 text-white">Subscription — 
 const AdminDashboard = () => <div className="p-8 text-white">Admin — Phase 2</div>
 
 export const router = createBrowserRouter([
-  // Guest-only routes
   {
-    element: <GuestRoute />,
+    element: <RootLayout />,
     children: [
+      // Guest-only routes
       {
-        element: <AuthLayout />,
+        element: <GuestRoute />,
         children: [
-          { path: '/login', element: <LoginPage /> },
-          { path: '/register', element: <RegisterPage /> },
+          {
+            element: <AuthLayout />,
+            children: [
+              { path: '/login', element: <LoginPage /> },
+              { path: '/register', element: <RegisterPage /> },
+            ],
+          },
         ],
       },
-    ],
-  },
 
-  // Subscriber routes (with MainLayout nav bar)
-  {
-    element: <ProtectedRoute role="subscriber" />,
-    children: [
+      // Subscriber routes (with MainLayout nav bar)
       {
-        element: <MainLayout />,
+        element: <ProtectedRoute role="subscriber" />,
         children: [
-          { path: '/', element: <HomePage /> },
-          { path: '/browse', element: <BrowsePage /> },
-          { path: '/content/:slug', element: <ContentDetailPage /> },
+          {
+            element: <MainLayout />,
+            children: [
+              { path: '/', element: <HomePage /> },
+              { path: '/browse', element: <BrowsePage /> },
+              { path: '/content/:slug', element: <ContentDetailPage /> },
+            ],
+          },
+          // Watch routes — outside MainLayout (no nav bar), but still subscriber-protected
+          { path: '/watch/:slug', element: <WatchPage /> },
+          { path: '/watch/:slug/episode/:episodeId', element: <WatchPage /> },
         ],
       },
-      // Watch routes — outside MainLayout (no nav bar), but still subscriber-protected
-      { path: '/watch/:slug', element: <WatchPage /> },
-      { path: '/watch/:slug/episode/:episodeId', element: <WatchPage /> },
-    ],
-  },
 
-  // Auth-only (subscription page — no active sub needed)
-  {
-    path: '/subscription',
-    element: <SubscriptionPage />,
-  },
-
-  // Admin routes
-  {
-    element: <ProtectedRoute role="admin" />,
-    children: [
+      // Auth-only (subscription page — no active sub needed)
       {
-        element: <AdminLayout />,
+        path: '/subscription',
+        element: <SubscriptionPage />,
+      },
+
+      // Admin routes
+      {
+        element: <ProtectedRoute role="admin" />,
         children: [
-          { path: '/admin', element: <AdminDashboard /> },
-          { path: '/admin/content', element: <ContentListPage /> },
-          { path: '/admin/content/:id', element: <ContentEditPage /> },
+          {
+            element: <AdminLayout />,
+            children: [
+              { path: '/admin', element: <AdminDashboard /> },
+              { path: '/admin/content', element: <ContentListPage /> },
+              { path: '/admin/content/:id', element: <ContentEditPage /> },
+            ],
+          },
         ],
       },
     ],
