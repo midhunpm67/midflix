@@ -59,13 +59,13 @@ export default function CarouselRow({ title, items, isLoading = false }: Carouse
             ? Array.from({ length: 6 }).map((_, i) => (
                 <div
                   key={i}
-                  className="aspect-video rounded-card bg-surface animate-pulse flex-shrink-0 w-[220px] sm:w-[260px] md:w-[300px] lg:w-[320px]"
+                  className="aspect-[2/3] rounded-card bg-surface animate-pulse flex-shrink-0 w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px]"
                 />
               ))
             : items.map((item) => (
                 <div
                   key={item.id}
-                  className="flex-shrink-0 w-[220px] sm:w-[260px] md:w-[300px] lg:w-[320px]"
+                  className="flex-shrink-0 w-[140px] sm:w-[160px] md:w-[180px] lg:w-[200px]"
                   style={{ scrollSnapAlign: 'start' }}
                 >
                   <ContentCard item={item} />
