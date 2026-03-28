@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { browseContent, searchContent, getGenres } from '@/api/content';
 import ContentGrid from '@/components/shared/ContentGrid';
@@ -7,10 +8,13 @@ import type { ContentType } from '@/types/content';
 const DEBOUNCE_MS = 300;
 
 export default function BrowsePage() {
+  const [searchParams] = useSearchParams();
+  const initialGenre = searchParams.get('genre') ?? undefined;
+
   const [searchInput, setSearchInput] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<ContentType | undefined>(undefined);
-  const [genreFilter, setGenreFilter] = useState<string | undefined>(undefined);
+  const [genreFilter, setGenreFilter] = useState<string | undefined>(initialGenre);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   // Debounce search input

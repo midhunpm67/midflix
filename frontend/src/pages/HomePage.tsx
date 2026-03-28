@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import HeroBanner from '@/components/shared/HeroBanner';
 import CarouselRow from '@/components/shared/CarouselRow';
+import GenreCards from '@/components/shared/GenreCards';
 import ContentCard from '@/components/shared/ContentCard';
 import { getTrending, getNewReleases } from '@/api/content';
 import { getContinueWatching } from '@/api/watch-history';
@@ -42,6 +43,7 @@ export default function HomePage() {
           items={newReleases.slice(1)}
           isLoading={loadingNew}
         />
+        <GenreCards />
       </div>
     </div>
   );
