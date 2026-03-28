@@ -24,6 +24,27 @@ function getColorForGenre(slug: string): string {
   return GENRE_COLORS[slug] ?? 'from-primary/30 to-primary/50 text-primary';
 }
 
+const GENRE_ICONS: Record<string, string> = {
+  action: '💥',
+  adventure: '🧭',
+  animation: '✨',
+  comedy: '😂',
+  crime: '🔫',
+  documentary: '🎬',
+  drama: '🎭',
+  fantasy: '🐉',
+  horror: '👻',
+  mystery: '🔍',
+  romance: '❤️',
+  'sci-fi': '🚀',
+  thriller: '⚡',
+  western: '🤠',
+};
+
+function getIconForGenre(slug: string): string {
+  return GENRE_ICONS[slug] ?? '🎬';
+}
+
 export default function GenreCards() {
   const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -79,6 +100,7 @@ export default function GenreCards() {
         >
           {genres.map((genre) => {
             const colors = getColorForGenre(genre.slug);
+            const icon = getIconForGenre(genre.slug);
             return (
               <button
                 key={genre.id}
@@ -87,8 +109,9 @@ export default function GenreCards() {
                 style={{ scrollSnapAlign: 'start' }}
                 className={`flex-shrink-0 w-[150px] sm:w-[160px] md:w-[175px] lg:w-[190px] xl:w-[200px] rounded-xl bg-gradient-to-br ring-1 ring-white/[0.06] transition-all duration-200 hover:scale-105 hover:ring-white/20 hover:brightness-110 active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${colors}`}
               >
-                <div className="flex items-center justify-center aspect-[4/3]">
-                  <span className="font-bold text-sm sm:text-base drop-shadow-sm">{genre.name}</span>
+                <div className="flex flex-col items-center justify-center gap-1.5 aspect-[4/3]">
+                  <span className="text-2xl sm:text-3xl" role="img" aria-hidden="true">{icon}</span>
+                  <span className="font-bold text-sm drop-shadow-sm">{genre.name}</span>
                 </div>
               </button>
             );
