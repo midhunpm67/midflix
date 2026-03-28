@@ -3,6 +3,7 @@ import type {
   AdminStats,
   Content,
   ContentListItem,
+  ContentType,
   CreateContentPayload,
   CreateEpisodePayload,
   CreateSeasonPayload,
@@ -15,7 +16,7 @@ import type {
 } from '@/types/content';
 
 export async function adminListContent(params?: {
-  type?: string;
+  type?: ContentType;
   search?: string;
   page?: number;
 }): Promise<PaginatedResponse<ContentListItem>> {

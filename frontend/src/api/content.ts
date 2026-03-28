@@ -1,8 +1,8 @@
 import { apiClient } from './axios';
-import type { Content, ContentListItem, Genre, PaginatedResponse, Season, Episode } from '@/types/content';
+import type { Content, ContentListItem, ContentType, Genre, PaginatedResponse, Season, Episode } from '@/types/content';
 
 export async function browseContent(params?: {
-  type?: string;
+  type?: ContentType;
   genre_id?: string;
   page?: number;
 }): Promise<PaginatedResponse<ContentListItem>> {
