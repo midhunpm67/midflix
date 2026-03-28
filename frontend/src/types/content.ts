@@ -112,3 +112,23 @@ export interface AdminStats {
   movies: number;
   series: number;
 }
+
+export interface WatchHistoryItem {
+  id: string;
+  content_id: string;
+  episode_id: string | null;
+  progress_seconds: number;
+  duration_seconds: number;
+  completed: boolean;
+  updated_at: string;
+}
+
+export interface ContinueWatchingItem extends WatchHistoryItem {
+  content: {
+    title: string;
+    slug: string;
+    type: ContentType;
+    poster_url: string | null;
+    backdrop_url: string | null;
+  };
+}
