@@ -5,10 +5,13 @@ import GenreCards from '@/components/shared/GenreCards';
 import ContentCard from '@/components/shared/ContentCard';
 import { getTrending, getNewReleases } from '@/api/content';
 import { getContinueWatching } from '@/api/watch-history';
+import { useAuthStore } from '@/stores/authStore';
 import type { ContentListItem, ContinueWatchingItem } from '@/types/content';
 import { useRef, useState, useEffect } from 'react';
 
 export default function HomePage() {
+  const { isAuthenticated } = useAuthStore();
+
   const { data: newReleases = [], isLoading: loadingNew } = useQuery({
     queryKey: ['new-releases'],
     queryFn: getNewReleases,
@@ -22,6 +25,7 @@ export default function HomePage() {
   const { data: continueWatching = [] } = useQuery({
     queryKey: ['continue-watching'],
     queryFn: getContinueWatching,
+    enabled: isAuthenticated,
   });
 
   const heroContent = newReleases.length > 0 ? newReleases[0] : null;

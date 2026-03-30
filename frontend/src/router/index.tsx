@@ -14,15 +14,14 @@ import ContentDetailPage from '@/pages/ContentDetailPage'
 import WatchPage from '@/pages/WatchPage'
 import BrowsePage from '@/pages/BrowsePage'
 
-// Placeholder pages — replaced in later phases
-const SubscriptionPage = () => <div className="p-8 text-white">Subscription — Phase 7</div>
-const AdminDashboard = () => <div className="p-8 text-white">Admin — Phase 2</div>
+// Placeholder pages
+const AdminDashboard = () => <div className="p-8 text-white">Admin Dashboard</div>
 
 export const router = createBrowserRouter([
   {
     element: <RootLayout />,
     children: [
-      // Guest-only routes
+      // Admin login route
       {
         element: <GuestRoute />,
         children: [
@@ -36,31 +35,21 @@ export const router = createBrowserRouter([
         ],
       },
 
-      // Subscriber routes (with MainLayout nav bar)
+      // Public routes — no login required (like JioHotstar)
       {
-        element: <ProtectedRoute role="subscriber" />,
+        element: <MainLayout />,
         children: [
-          {
-            element: <MainLayout />,
-            children: [
-              { path: '/', element: <HomePage /> },
-              { path: '/browse', element: <BrowsePage /> },
-              { path: '/content/:slug', element: <ContentDetailPage /> },
-            ],
-          },
-          // Watch routes — outside MainLayout (no nav bar), but still subscriber-protected
-          { path: '/watch/:slug', element: <WatchPage /> },
-          { path: '/watch/:slug/episode/:episodeId', element: <WatchPage /> },
+          { path: '/', element: <HomePage /> },
+          { path: '/browse', element: <BrowsePage /> },
+          { path: '/content/:slug', element: <ContentDetailPage /> },
         ],
       },
 
-      // Auth-only (subscription page — no active sub needed)
-      {
-        path: '/subscription',
-        element: <SubscriptionPage />,
-      },
+      // Watch routes — public, no nav bar
+      { path: '/watch/:slug', element: <WatchPage /> },
+      { path: '/watch/:slug/episode/:episodeId', element: <WatchPage /> },
 
-      // Admin routes
+      // Admin routes — login required + admin role
       {
         element: <ProtectedRoute role="admin" />,
         children: [

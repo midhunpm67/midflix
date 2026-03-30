@@ -17,6 +17,7 @@ Route::prefix('v1')->group(function () {
         });
     });
 
+    // Admin routes — auth + admin role required
     Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
         Route::get('/stats', [\App\Http\Controllers\Api\V1\Admin\StatsController::class, 'index']);
         Route::post('/upload', [\App\Http\Controllers\Api\V1\Admin\UploadController::class, 'store']);
@@ -40,25 +41,25 @@ Route::prefix('v1')->group(function () {
         Route::get('seasons/{season}/episodes', [App\Http\Controllers\Api\V1\Admin\EpisodeController::class, 'indexForSeason']);
     });
 
-    Route::middleware('auth:sanctum')->prefix('content')->group(function () {
+    // Public content routes — no auth required
+    Route::prefix('content')->group(function () {
         Route::get('/', [\App\Http\Controllers\Api\V1\ContentController::class, 'index']);
         Route::get('/trending', [\App\Http\Controllers\Api\V1\ContentController::class, 'trending']);
         Route::get('/new-releases', [\App\Http\Controllers\Api\V1\ContentController::class, 'newReleases']);
         Route::get('/search', [\App\Http\Controllers\Api\V1\ContentController::class, 'search']);
-        Route::middleware('subscriber')->get('/{slug}', [\App\Http\Controllers\Api\V1\ContentController::class, 'show']);
+        Route::get('/{slug}', [\App\Http\Controllers\Api\V1\ContentController::class, 'show']);
     });
 
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/genres', [\App\Http\Controllers\Api\V1\GenreController::class, 'index']);
+    // Public browse routes — no auth required
+    Route::get('/genres', [\App\Http\Controllers\Api\V1\GenreController::class, 'index']);
+    Route::get('/content/{slug}/seasons', [\App\Http\Controllers\Api\V1\PublicBrowseController::class, 'seasons']);
+    Route::get('/seasons/{id}/episodes', [\App\Http\Controllers\Api\V1\PublicBrowseController::class, 'episodes']);
 
+    // Watch history — auth required (optional feature for logged-in users)
+    Route::middleware('auth:sanctum')->group(function () {
         Route::post('/me/watch-history', [\App\Http\Controllers\Api\V1\WatchHistoryController::class, 'store']);
         Route::get('/me/watch-history/{contentId}', [\App\Http\Controllers\Api\V1\WatchHistoryController::class, 'show']);
         Route::get('/me/continue-watching', [\App\Http\Controllers\Api\V1\WatchHistoryController::class, 'continueWatching']);
-
-        Route::middleware('subscriber')->group(function () {
-            Route::get('/content/{slug}/seasons', [\App\Http\Controllers\Api\V1\PublicBrowseController::class, 'seasons']);
-            Route::get('/seasons/{id}/episodes', [\App\Http\Controllers\Api\V1\PublicBrowseController::class, 'episodes']);
-        });
     });
 
 });

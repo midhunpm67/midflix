@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { getContentBySlug, getContentSeasons, getSeasonEpisodes } from '@/api/content';
 import { saveWatchHistory, getWatchHistory } from '@/api/watch-history';
+import { useAuthStore } from '@/stores/authStore';
 import VideoPlayer from '@/components/player/VideoPlayer';
 import type { Episode, Season } from '@/types/content';
 
@@ -38,13 +39,14 @@ export default function WatchPage() {
 
   const currentEpisode = episodes.find((ep) => ep.id === episodeId);
 
+  const { isAuthenticated } = useAuthStore();
   const contentId = content?.id ?? '';
   const watchEpisodeId = isSeriesMode ? (episodeId ?? null) : null;
 
   const { data: watchHistory } = useQuery({
     queryKey: ['watch-history', contentId, watchEpisodeId],
     queryFn: () => getWatchHistory(contentId, watchEpisodeId),
-    enabled: !!contentId,
+    enabled: !!contentId && isAuthenticated,
     retry: false,
   });
 
@@ -56,7 +58,7 @@ export default function WatchPage() {
   saveMutateRef.current = saveMutation.mutate;
 
   const saveProgress = useCallback(() => {
-    if (!contentId || progressRef.current.duration === 0) return;
+    if (!isAuthenticated || !contentId || progressRef.current.duration === 0) return;
     const now = Date.now();
     if (now - lastSaveRef.current < SAVE_INTERVAL_MS) return;
     lastSaveRef.current = now;
@@ -69,7 +71,7 @@ export default function WatchPage() {
   }, [contentId, watchEpisodeId]);
 
   const saveProgressForce = useCallback(() => {
-    if (!contentId || progressRef.current.duration === 0) return;
+    if (!isAuthenticated || !contentId || progressRef.current.duration === 0) return;
     lastSaveRef.current = Date.now();
     saveMutateRef.current({
       content_id: contentId,
@@ -81,14 +83,14 @@ export default function WatchPage() {
 
   useEffect(() => {
     function handleBeforeUnload() {
-      if (!contentId || progressRef.current.duration === 0) return;
+      const token = localStorage.getItem('auth_token');
+      if (!token || !contentId || progressRef.current.duration === 0) return;
       const payload = JSON.stringify({
         content_id: contentId,
         episode_id: watchEpisodeId,
         progress_seconds: Math.floor(progressRef.current.currentTime),
         duration_seconds: Math.floor(progressRef.current.duration),
       });
-      const token = localStorage.getItem('auth_token');
       const apiBase = import.meta.env.VITE_API_BASE_URL ?? '';
       fetch(`${apiBase}/api/v1/me/watch-history`, {
         method: 'POST',

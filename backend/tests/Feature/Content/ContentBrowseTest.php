@@ -42,8 +42,10 @@ test('subscriber can browse published content', function () {
         ->assertJsonCount(3, 'data.items');
 });
 
-test('unauthenticated user cannot browse content', function () {
-    $this->getJson('/api/v1/content')->assertStatus(401);
+test('unauthenticated user can browse content', function () {
+    Content::factory()->count(2)->create(['is_published' => true]);
+    $this->getJson('/api/v1/content')->assertStatus(200)
+        ->assertJsonCount(2, 'data.items');
 });
 
 test('subscriber can get content detail by slug', function () {
@@ -96,16 +98,10 @@ test('subscriber can search content', function () {
         ->assertJsonCount(1, 'data.items');
 });
 
-test('user without active subscription gets 403 on content detail', function () {
-    $user = User::factory()->create([
-        'is_active' => true,
-        'subscription' => ['plan' => 'free', 'status' => 'expired', 'trial_ends_at' => null, 'expires_at' => null],
-    ]);
-    $role = Role::where('name', 'subscriber')->first();
-    $user->assignRole($role);
-    $token = $user->createToken('test')->plainTextToken;
-    $content = Content::factory()->create(['is_published' => true, 'slug' => 'locked-movie']);
+test('unauthenticated user can view content detail', function () {
+    $content = Content::factory()->create(['is_published' => true, 'slug' => 'public-movie']);
 
-    $this->withToken($token)->getJson('/api/v1/content/locked-movie')
-        ->assertStatus(403);
+    $this->getJson('/api/v1/content/public-movie')
+        ->assertStatus(200)
+        ->assertJsonPath('data.slug', 'public-movie');
 });

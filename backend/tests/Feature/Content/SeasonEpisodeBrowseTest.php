@@ -82,16 +82,19 @@ test('authenticated user can list genres', function () {
         ->assertJsonCount(2, 'data');
 });
 
-test('unauthenticated request is rejected for genres', function () {
-    $this->getJson('/api/v1/genres')->assertStatus(401);
+test('unauthenticated user can access genres', function () {
+    $this->getJson('/api/v1/genres')->assertStatus(200);
 });
 
-test('unauthenticated request is rejected for seasons', function () {
-    $this->getJson('/api/v1/content/some-slug/seasons')->assertStatus(401);
+test('unauthenticated user can access seasons', function () {
+    $content = \App\Models\Content::factory()->create(['is_published' => true, 'slug' => 'public-series', 'type' => 'series']);
+    $this->getJson('/api/v1/content/public-series/seasons')->assertStatus(200);
 });
 
-test('unauthenticated request is rejected for episodes', function () {
-    $this->getJson('/api/v1/seasons/000000000000000000000000/episodes')->assertStatus(401);
+test('unauthenticated user can access episodes', function () {
+    $content = \App\Models\Content::factory()->create(['is_published' => true, 'type' => 'series']);
+    $season = \App\Models\Season::create(['content_id' => (string) $content->_id, 'number' => 1]);
+    $this->getJson("/api/v1/seasons/{$season->_id}/episodes")->assertStatus(200);
 });
 
 test('episodes endpoint returns 404 for unknown season id', function () {
