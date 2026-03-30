@@ -7,7 +7,7 @@ export async function register(data: {
   password: string
   password_confirmation: string
 }): Promise<AuthResponse> {
-  const response = await apiClient.post<{ data: AuthResponse }>('/auth/register', data)
+  const response = await apiClient.post<{ data: AuthResponse }>('/api/v1/auth/register', data)
   return response.data.data
 }
 
@@ -15,15 +15,15 @@ export async function login(data: {
   email: string
   password: string
 }): Promise<AuthResponse> {
-  const response = await apiClient.post<{ data: AuthResponse }>('/auth/login', data)
+  const response = await apiClient.post<{ data: AuthResponse }>('/api/v1/auth/login', data)
   return response.data.data
 }
 
 export async function logout(): Promise<void> {
-  await apiClient.post('/auth/logout')
+  await apiClient.post('/api/v1/auth/logout')
 }
 
 export async function getMe(): Promise<User> {
-  const response = await apiClient.get<{ data: User }>('/auth/me')
+  const response = await apiClient.get<{ data: User }>('/api/v1/auth/me')
   return response.data.data
 }
