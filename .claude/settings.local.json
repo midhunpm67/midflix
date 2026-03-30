@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git -C /var/www/html/MidFlix diff b6b0b3a..711a6dd --stat)",
+      "Bash(git -C /var/www/html/MidFlix diff 711a6dd..79c05f2 --name-only)",
+      "Bash(git -C /var/www/html/MidFlix show 79c05f2:backend/database/migrations/)",
+      "Bash(git -C /var/www/html/MidFlix ls-tree -r 79c05f2 -- backend/database/migrations/)",
+      "Bash(git -C /var/www/html/MidFlix diff 711a6dd..79c05f2 -- backend/Dockerfile)",
+      "Bash(git -C /var/www/html/MidFlix ls-tree -r 711a6dd -- backend/Dockerfile)",
+      "Bash(git -C /var/www/html/MidFlix show 711a6dd:backend/Dockerfile)",
+      "Bash(git -C /var/www/html/MidFlix ls-tree -r 79c05f2 -- backend/)",
+      "Bash(git -C /var/www/html/MidFlix show 79c05f2:backend/config/permission.php)",
+      "Bash(git -C /var/www/html/MidFlix show 79c05f2:backend/config/database.php)",
+      "Bash(git -C /var/www/html/MidFlix show 79c05f2:backend/app/Models/User.php)",
+      "Bash(git -C /var/www/html/MidFlix show 79c05f2:backend/docker-entrypoint.sh)",
+      "Bash(git -C /var/www/html/MidFlix show 79c05f2:backend/composer.json)",
+      "Bash(git -C /var/www/html/MidFlix show 79c05f2:backend/.gitignore)",
+      "Bash(python3 -c \"import sys,json; c=json.load\\(sys.stdin\\); s=c.get\\(''''scripts'''',{}\\); print\\(s.get\\(''''setup'''',''''''''\\)\\)\")",
+      "Bash(find /var/www/html/MidFlix/backend/vendor/laravel/sanctum/src -name PersonalAccessToken*)",
+      "Bash(php artisan tinker --execute=\":*)",
+      "Bash(php artisan:*)",
+      "Bash(./vendor/bin/pest tests/Feature/Auth/RegisterTest.php)",
+      "Bash(./vendor/bin/pest tests/Feature/Auth/)",
+      "Bash(1:*)",
+      "Bash(docker compose:*)",
+      "Read(//usr/local/bin/**)",
+      "Read(//usr/bin/**)",
+      "Bash(command -v docker)",
+      "Bash(source ~/.nvm/nvm.sh)",
+      "Bash(nvm use:*)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}
