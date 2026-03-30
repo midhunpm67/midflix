@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { browseContent, searchContent, getGenres } from '@/api/content';
+import { browseContent, searchContent, getGenres, getLanguages } from '@/api/content';
 import ContentGrid from '@/components/shared/ContentGrid';
 import type { ContentType } from '@/types/content';
 
@@ -15,6 +15,7 @@ export default function BrowsePage() {
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState<ContentType | undefined>(undefined);
   const [genreFilter, setGenreFilter] = useState<string | undefined>(initialGenre);
+  const [languageFilter, setLanguageFilter] = useState<string | undefined>(undefined);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   // Debounce search input
@@ -25,10 +26,15 @@ export default function BrowsePage() {
     return () => clearTimeout(timer);
   }, [searchInput]);
 
-  // Fetch genres for filter dropdown
+  // Fetch genres and languages for filter dropdowns
   const { data: genres = [] } = useQuery({
     queryKey: ['genres'],
     queryFn: getGenres,
+  });
+
+  const { data: languages = [] } = useQuery({
+    queryKey: ['languages'],
+    queryFn: getLanguages,
   });
 
   // Infinite query for browse/search
@@ -41,12 +47,12 @@ export default function BrowsePage() {
     isError,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ['browse', debouncedQuery, typeFilter, genreFilter],
+    queryKey: ['browse', debouncedQuery, typeFilter, genreFilter, languageFilter],
     queryFn: async ({ pageParam = 1 }) => {
       if (debouncedQuery) {
         return searchContent(debouncedQuery, pageParam as number);
       }
-      return browseContent({ type: typeFilter, genre_id: genreFilter, page: pageParam as number });
+      return browseContent({ type: typeFilter, genre_id: genreFilter, language: languageFilter, page: pageParam as number });
     },
     getNextPageParam: (lastPage) => {
       if (lastPage.current_page < lastPage.last_page) {
@@ -69,9 +75,12 @@ export default function BrowsePage() {
       if (genreFilter) {
         items = items.filter((item) => item.genre_ids.includes(genreFilter));
       }
+      if (languageFilter) {
+        items = items.filter((item) => item.language === languageFilter);
+      }
     }
     return items;
-  }, [data, debouncedQuery, typeFilter, genreFilter]);
+  }, [data, debouncedQuery, typeFilter, genreFilter, languageFilter]);
 
   // IntersectionObserver for infinite scroll
   useEffect(() => {
@@ -162,6 +171,20 @@ export default function BrowsePage() {
           {genres.map((genre) => (
             <option key={genre.id} value={genre.id}>
               {genre.name}
+            </option>
+          ))}
+        </select>
+
+        {/* Language dropdown */}
+        <select
+          value={languageFilter ?? ''}
+          onChange={(e) => setLanguageFilter(e.target.value || undefined)}
+          className="bg-surface border border-surface-variant text-white rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+        >
+          <option value="">All Languages</option>
+          {languages.map((lang) => (
+            <option key={lang} value={lang}>
+              {lang}
             </option>
           ))}
         </select>

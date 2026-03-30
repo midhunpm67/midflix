@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MidFlix - Project Documentation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --primary: #0369a1;
+    --primary-light: #e0f2fe;
+    --bg: #ffffff;
+    --surface: #f8fafc;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --text-secondary: #475569;
+    --muted: #94a3b8;
+    --green: #16a34a;
+    --green-bg: #f0fdf4;
+    --amber: #d97706;
+    --amber-bg: #fffbeb;
+    --violet: #7c3aed;
+    --violet-bg: #f5f3ff;
+    --cyan: #0891b2;
+    --cyan-bg: #ecfeff;
+    --rose: #e11d48;
+    --rose-bg: #fff1f2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 10.5pt;
+    line-height: 1.7;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ===== COVER PAGE ===== */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: linear-gradient(160deg, #0c4a6e 0%, #0369a1 40%, #0ea5e9 100%);
+    padding: 60px 40px;
+    page-break-after: always;
+  }
+  .cover-logo {
+    font-size: 52pt;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .cover-logo span { color: #38bdf8; }
+  .cover-subtitle {
+    font-size: 13pt;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 50px;
+  }
+  .cover-line {
+    width: 60px;
+    height: 3px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 2px;
+    margin: 0 auto 40px;
+  }
+  .cover-title {
+    font-size: 18pt;
+    color: #fff;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .cover-desc {
+    font-size: 10pt;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 50px;
+  }
+  .cover-meta {
+    font-size: 9.5pt;
+    color: rgba(255,255,255,0.55);
+    line-height: 2.2;
+  }
+  .cover-meta strong { color: rgba(255,255,255,0.8); }
+  .cover-badge {
+    display: inline-block;
+    padding: 8px 24px;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 24px;
+    color: #fff;
+    font-size: 9pt;
+    letter-spacing: 0.08em;
+    margin-top: 36px;
+  }
+
+  /* ===== TABLE OF CONTENTS ===== */
+  .toc { padding: 50px 60px; page-break-after: always; }
+  .toc h2 {
+    font-size: 20pt;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 28px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid var(--primary);
+    display: inline-block;
+  }
+  .toc-list { list-style: none; }
+  .toc-list li {
+    padding: 9px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  .toc-num {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 10pt;
+    min-width: 28px;
+  }
+  .toc-title { color: var(--text); font-weight: 500; font-size: 11pt; }
+
+  /* ===== MAIN CONTENT ===== */
+  .content { padding: 36px 60px; }
+
+  h2 {
+    font-size: 17pt;
+    font-weight: 700;
+    color: var(--primary);
+    margin-top: 44px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+    page-break-after: avoid;
+  }
+  h3 {
+    font-size: 12pt;
+    font-weight: 600;
+    color: var(--text);
+    margin-top: 26px;
+    margin-bottom: 10px;
+    page-break-after: avoid;
+  }
+  h4 {
+    font-size: 10.5pt;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-top: 18px;
+    margin-bottom: 6px;
+  }
+  p { margin-bottom: 10px; color: var(--text-secondary); }
+
+  .section-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 11pt;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  /* ===== TABLES ===== */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px;
+    font-size: 9pt;
+    page-break-inside: auto;
+  }
+  thead th {
+    background: var(--surface);
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 7.5pt;
+    padding: 8px 12px;
+    text-align: left;
+    border: 1px solid var(--border);
+  }
+  tbody td {
+    padding: 7px 12px;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    vertical-align: top;
+  }
+  tbody tr:nth-child(even) { background: var(--surface); }
+
+  /* ===== CODE ===== */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    background: #f1f5f9;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 8.5pt;
+    color: var(--primary);
+    border: 1px solid #e2e8f0;
+  }
+  pre {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    overflow-x: auto;
+    margin: 10px 0 18px;
+    font-size: 8.5pt;
+    line-height: 1.8;
+    page-break-inside: avoid;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    border: none;
+    color: var(--text-secondary);
+  }
+
+  /* ===== BADGES ===== */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 7.5pt;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+  .badge-primary { background: var(--primary-light); color: var(--primary); }
+  .badge-green { background: var(--green-bg); color: var(--green); }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); }
+  .badge-violet { background: var(--violet-bg); color: var(--violet); }
+  .badge-rose { background: var(--rose-bg); color: var(--rose); }
+  .badge-cyan { background: var(--cyan-bg); color: var(--cyan); }
+
+  /* ===== CARDS ===== */
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 14px 0 20px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    page-break-inside: avoid;
+  }
+  .card-title { font-weight: 600; color: var(--text); font-size: 10pt; margin-bottom: 4px; }
+  .card-desc { color: var(--text-secondary); font-size: 9pt; line-height: 1.6; }
+
+  /* ===== FEATURE LIST ===== */
+  .feature-list { list-style: none; margin: 10px 0 18px; }
+  .feature-list li {
+    padding: 5px 0 5px 22px;
+    position: relative;
+    color: var(--text-secondary);
+    font-size: 9.5pt;
+  }
+  .feature-list li::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 12px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--primary);
+    opacity: 0.5;
+  }
+
+  /* ===== FILE TREE ===== */
+  .tree {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8pt;
+    line-height: 2;
+    color: var(--text-secondary);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 10px 0 18px;
+    page-break-inside: avoid;
+  }
+  .tree .dir { color: var(--primary); font-weight: 600; }
+  .tree .file { color: var(--text-secondary); }
+  .tree .desc { color: var(--muted); font-style: italic; }
+
+  /* ===== INFO BOX ===== */
+  .info-box {
+    background: var(--primary-light);
+    border: 1px solid #bae6fd;
+    border-left: 4px solid var(--primary);
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 14px 0 18px;
+    font-size: 9pt;
+    color: var(--text-secondary);
+  }
+  .info-box strong { color: var(--primary); }
+
+  /* ===== ARCHITECTURE DIAGRAM ===== */
+  .arch-diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    margin: 18px 0;
+    text-align: center;
+    page-break-inside: avoid;
+  }
+  .arch-row { display: flex; justify-content: center; gap: 14px; margin: 6px 0; }
+  .arch-box {
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-size: 9pt;
+    font-weight: 600;
+    min-width: 110px;
+    text-align: center;
+  }
+  .arch-arrow { color: var(--muted); font-size: 14pt; margin: 2px 0; }
+  .arch-blue { background: var(--primary-light); color: var(--primary); border: 1px solid #bae6fd; }
+  .arch-green { background: var(--green-bg); color: var(--green); border: 1px solid #bbf7d0; }
+  .arch-violet { background: var(--violet-bg); color: var(--violet); border: 1px solid #ddd6fe; }
+  .arch-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid #fde68a; }
+  .arch-cyan { background: var(--cyan-bg); color: var(--cyan); border: 1px solid #a5f3fc; }
+
+  /* ===== DIVIDER & FOOTER ===== */
+  .divider { height: 1px; background: var(--border); margin: 36px 0; }
+  .page-footer {
+    text-align: center;
+    padding: 24px 60px;
+    color: var(--muted);
+    font-size: 8pt;
+    border-top: 1px solid var(--border);
+    margin-top: 36px;
+  }
+  .page-break { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<!-- ===== COVER ===== -->
+<div class="cover">
+  <div class="cover-logo">MID<span>FLIX</span></div>
+  <div class="cover-subtitle">Streaming Platform</div>
+  <div class="cover-line"></div>
+  <div class="cover-title">Technical Documentation</div>
+  <div class="cover-desc">Architecture, API Reference &amp; Deployment Guide</div>
+  <div class="cover-meta">
+    <div><strong>Version:</strong> 1.0.0</div>
+    <div><strong>Date:</strong> March 30, 2026</div>
+    <div><strong>Stack:</strong> Laravel 12 &middot; React 19 &middot; MongoDB &middot; Mux</div>
+  </div>
+  <div class="cover-badge">Full-Stack Streaming Application</div>
+</div>
+
+<!-- ===== TABLE OF CONTENTS ===== -->
+<div class="toc">
+  <h2>Table of Contents</h2>
+  <ol class="toc-list">
+    <li><span class="toc-num">01</span><span class="toc-title">Project Overview</span></li>
+    <li><span class="toc-num">02</span><span class="toc-title">Architecture &amp; Tech Stack</span></li>
+    <li><span class="toc-num">03</span><span class="toc-title">Project Structure</span></li>
+    <li><span class="toc-num">04</span><span class="toc-title">Backend — Models &amp; Database</span></li>
+    <li><span class="toc-num">05</span><span class="toc-title">Backend — API Reference</span></li>
+    <li><span class="toc-num">06</span><span class="toc-title">Backend — Services &amp; Business Logic</span></li>
+    <li><span class="toc-num">07</span><span class="toc-title">Frontend — Pages &amp; Routing</span></li>
+    <li><span class="toc-num">08</span><span class="toc-title">Frontend — Components</span></li>
+    <li><span class="toc-num">09</span><span class="toc-title">Frontend — State Management</span></li>
+    <li><span class="toc-num">10</span><span class="toc-title">Authentication &amp; Authorization</span></li>
+    <li><span class="toc-num">11</span><span class="toc-title">Video Streaming &amp; Playback</span></li>
+    <li><span class="toc-num">12</span><span class="toc-title">Docker &amp; Deployment</span></li>
+    <li><span class="toc-num">13</span><span class="toc-title">Environment Configuration</span></li>
+    <li><span class="toc-num">14</span><span class="toc-title">Getting Started</span></li>
+  </ol>
+</div>
+
+<!-- ===== 1. PROJECT OVERVIEW ===== -->
+<div class="content">
+  <h2><span class="section-num">1</span> Project Overview</h2>
+
+  <p><strong style="color:var(--text)">MidFlix</strong> is a full-stack video streaming platform inspired by services like JioHotstar. It provides a complete content management system for administrators, a public-facing browsing experience, HLS video playback with adaptive quality, watch history tracking, and role-based access control.</p>
+
+  <h3>Key Features</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title">Content Management</div>
+      <div class="card-desc">Full CRUD for movies and series with seasons, episodes, genres, cast, and rich metadata. Supports image uploads and Mux video integration.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Public Browsing</div>
+      <div class="card-desc">No login required to browse, search, and watch content. Trending, new releases, genre filtering, and infinite scroll.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Video Streaming</div>
+      <div class="card-desc">HLS playback via Mux with adaptive quality selection, subtitle support, keyboard shortcuts, Picture-in-Picture, and fullscreen.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Watch History</div>
+      <div class="card-desc">Per-user progress tracking with auto-save every 15 seconds, resume playback, and a "Continue Watching" carousel for logged-in users.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Admin Dashboard</div>
+      <div class="card-desc">Premium admin panel with analytics, content stats, recent activity, top viewed content, and quick action shortcuts.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Role-Based Access</div>
+      <div class="card-desc">Sanctum token auth with Spatie permissions. Admin and subscriber roles with middleware-based route protection.</div>
+    </div>
+  </div>
+
+  <h3>Access Model</h3>
+  <div class="info-box">
+    <strong>Public-First Design:</strong> All content browsing and video playback is accessible without authentication (similar to JioHotstar). Login is only required for the admin dashboard and for features like watch history and continue watching.
+  </div>
+
+  <!-- ===== 2. ARCHITECTURE ===== -->
+  <div class="page-break"></div>
+  <h2><span class="section-num">2</span> Architecture &amp; Tech Stack</h2>
+
+  <h3>System Architecture</h3>
+  <div class="arch-diagram">
+    <div class="arch-row">
+      <div class="arch-box arch-blue">React 19 + TypeScript<br><small style="opacity:0.7">Vite &middot; Tailwind CSS</small></div>
+    </div>
+    <div class="arch-arrow">&darr;</div>
+    <div class="arch-row">
+      <div class="arch-box arch-green">Nginx<br><small style="opacity:0.7">Reverse Proxy</small></div>
+    </div>
+    <div class="arch-arrow">&darr;</div>
+    <div class="arch-row">
+      <div class="arch-box arch-violet">Laravel 12 API<br><small style="opacity:0.7">PHP 8.3 &middot; Sanctum</small></div>
+    </div>
+    <div class="arch-arrow">&darr;</div>
+    <div class="arch-row">
+      <div class="arch-box arch-amber">MongoDB 7<br><small style="opacity:0.7">Primary Database</small></div>
+      <div class="arch-box arch-cyan">Redis 7<br><small style="opacity:0.7">Cache &middot; Sessions</small></div>
+      <div class="arch-box arch-blue">Mux API<br><small style="opacity:0.7">Video CDN</small></div>
+    </div>
+  </div>
+
+  <h3>Tech Stack</h3>
+  <table>
+    <thead><tr><th>Layer</th><th>Technology</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-primary">Frontend</span></td><td>React 19, TypeScript, Vite</td><td>SPA user interface</td></tr>
+      <tr><td><span class="badge badge-primary">Frontend</span></td><td>TanStack Query v5</td><td>Server state &amp; caching</td></tr>
+      <tr><td><span class="badge badge-primary">Frontend</span></td><td>Zustand</td><td>Client state management</td></tr>
+      <tr><td><span class="badge badge-primary">Frontend</span></td><td>Tailwind CSS</td><td>Utility-first styling</td></tr>
+      <tr><td><span class="badge badge-primary">Frontend</span></td><td>HLS.js</td><td>Adaptive video streaming</td></tr>
+      <tr><td><span class="badge badge-primary">Frontend</span></td><td>React Hook Form + Zod</td><td>Form handling &amp; validation</td></tr>
+      <tr><td><span class="badge badge-violet">Backend</span></td><td>Laravel 12 (PHP 8.3)</td><td>REST API framework</td></tr>
+      <tr><td><span class="badge badge-violet">Backend</span></td><td>Laravel Sanctum</td><td>Token-based authentication</td></tr>
+      <tr><td><span class="badge badge-violet">Backend</span></td><td>Spatie Permission</td><td>Role &amp; permission management</td></tr>
+      <tr><td><span class="badge badge-amber">Database</span></td><td>MongoDB 7</td><td>NoSQL document storage</td></tr>
+      <tr><td><span class="badge badge-cyan">Cache</span></td><td>Redis 7</td><td>Caching, sessions, queues</td></tr>
+      <tr><td><span class="badge badge-green">Video</span></td><td>Mux</td><td>Video hosting &amp; CDN</td></tr>
+      <tr><td><span class="badge badge-rose">Infra</span></td><td>Docker Compose</td><td>Container orchestration</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ===== 3. PROJECT STRUCTURE ===== -->
+  <div class="page-break"></div>
+  <h2><span class="section-num">3</span> Project Structure</h2>
+
+  <div class="tree">
+<span class="dir">MidFlix/</span>
+├── <span class="dir">backend/</span> <span class="desc">— Laravel 12 API</span>
+│   ├── <span class="dir">app/</span>
+│   │   ├── <span class="dir">Models/</span> <span class="desc">— Content, User, Season, Episode, Genre, WatchHistory, Role</span>
+│   │   ├── <span class="dir">Http/</span>
+│   │   │   ├── <span class="dir">Controllers/Api/V1/</span> <span class="desc">— Public &amp; Admin API controllers</span>
+│   │   │   ├── <span class="dir">Requests/</span> <span class="desc">— Form request validation classes</span>
+│   │   │   ├── <span class="dir">Resources/</span> <span class="desc">— JSON API response transformers</span>
+│   │   │   └── <span class="dir">Middleware/</span> <span class="desc">— CheckSubscriberAccess, etc.</span>
+│   │   └── <span class="dir">Services/</span> <span class="desc">— AuthService, ContentService, WatchHistoryService</span>
+│   ├── <span class="dir">database/</span>
+│   │   ├── <span class="dir">factories/</span> <span class="desc">— UserFactory, ContentFactory</span>
+│   │   └── <span class="dir">seeders/</span> <span class="desc">— RoleSeeder, GenreSeeder</span>
+│   ├── <span class="dir">routes/</span>
+│   │   └── <span class="file">api.php</span> <span class="desc">— All API route definitions</span>
+│   ├── <span class="file">Dockerfile</span>
+│   └── <span class="file">composer.json</span>
+│
+├── <span class="dir">frontend/</span> <span class="desc">— React 19 + TypeScript SPA</span>
+│   ├── <span class="dir">src/</span>
+│   │   ├── <span class="dir">pages/</span> <span class="desc">— HomePage, BrowsePage, WatchPage, Admin pages</span>
+│   │   ├── <span class="dir">components/</span>
+│   │   │   ├── <span class="dir">ui/</span> <span class="desc">— Button, Input, Card, Badge primitives</span>
+│   │   │   ├── <span class="dir">shared/</span> <span class="desc">— HeroBanner, CarouselRow, ContentCard, ContentModal, Footer</span>
+│   │   │   ├── <span class="dir">player/</span> <span class="desc">— VideoPlayer (HLS.js)</span>
+│   │   │   └── <span class="dir">admin/</span> <span class="desc">— ContentForm, SeasonManager, EpisodeList</span>
+│   │   ├── <span class="dir">layouts/</span> <span class="desc">— RootLayout, MainLayout, AdminLayout, AuthLayout</span>
+│   │   ├── <span class="dir">router/</span> <span class="desc">— Route config, ProtectedRoute, GuestRoute</span>
+│   │   ├── <span class="dir">stores/</span> <span class="desc">— authStore, uiStore, modalStore (Zustand)</span>
+│   │   ├── <span class="dir">api/</span> <span class="desc">— axios client, auth, content, watch-history, admin API</span>
+│   │   ├── <span class="dir">types/</span> <span class="desc">— TypeScript interfaces (user.ts, content.ts)</span>
+│   │   └── <span class="dir">lib/</span> <span class="desc">— constants, utils, mux helpers</span>
+│   ├── <span class="file">package.json</span>
+│   └── <span class="file">vite.config.ts</span>
+│
+├── <span class="dir">docker/</span>
+│   └── <span class="dir">nginx/</span> <span class="desc">— Nginx reverse proxy config</span>
+│
+└── <span class="file">docker-compose.yml</span> <span class="desc">— Full stack orchestration</span>
+  </div>
+
+  <!-- ===== 4. MODELS ===== -->
+  <div class="page-break"></div>
+  <h2><span class="section-num">4</span> Backend — Models &amp; Database</h2>
+
+  <p>All models use MongoDB via the <code>mongodb/laravel-mongodb</code> package. Each model extends <code>MongoDB\Laravel\Eloquent\Model</code> with <code>$connection = 'mongodb'</code>.</p>
+
+  <h3>4.1 User Model</h3>
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>name</code></td><td>string</td><td>User display name</td></tr>
+      <tr><td><code>email</code></td><td>string</td><td>Unique email address</td></tr>
+      <tr><td><code>password</code></td><td>string (hashed)</td><td>Bcrypt hashed password</td></tr>
+      <tr><td><code>avatar</code></td><td>string | null</td><td>Avatar image URL</td></tr>
+      <tr><td><code>is_active</code></td><td>boolean</td><td>Account active status</td></tr>
+      <tr><td><code>subscription</code></td><td>object</td><td>{ plan, status, trial_ends_at, expires_at }</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Traits:</strong> HasRoles (Spatie), HasApiTokens (Sanctum), HasFactory</p>
+
+  <h3>4.2 Content Model</h3>
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>title</code></td><td>string</td><td>Content title</td></tr>
+      <tr><td><code>slug</code></td><td>string</td><td>URL-friendly unique identifier</td></tr>
+      <tr><td><code>description</code></td><td>string</td><td>Synopsis / description text</td></tr>
+      <tr><td><code>type</code></td><td>enum</td><td><code>movie</code> or <code>series</code></td></tr>
+      <tr><td><code>genre_ids</code></td><td>array</td><td>Array of Genre ObjectIDs</td></tr>
+      <tr><td><code>cast</code></td><td>array</td><td>Array of actor names</td></tr>
+      <tr><td><code>director</code></td><td>string | null</td><td>Director name</td></tr>
+      <tr><td><code>year</code></td><td>integer</td><td>Release year</td></tr>
+      <tr><td><code>rating</code></td><td>string | null</td><td>Content rating (PG-13, R, etc.)</td></tr>
+      <tr><td><code>duration</code></td><td>integer | null</td><td>Duration in minutes</td></tr>
+      <tr><td><code>language</code></td><td>string | null</td><td>Primary language</td></tr>
+      <tr><td><code>imdb_rating</code></td><td>float | null</td><td>IMDb score (0-10)</td></tr>
+      <tr><td><code>is_featured</code></td><td>boolean</td><td>Featured / premium badge</td></tr>
+      <tr><td><code>poster_url</code></td><td>string | null</td><td>Poster image (2:3 aspect ratio)</td></tr>
+      <tr><td><code>backdrop_url</code></td><td>string | null</td><td>Backdrop image (16:9 ratio)</td></tr>
+      <tr><td><code>trailer_url</code></td><td>string | null</td><td>Trailer URL</td></tr>
+      <tr><td><code>video</code></td><td>object</td><td>{ playback_id, status: pending | ready }</td></tr>
+      <tr><td><code>is_published</code></td><td>boolean</td><td>Published state (Live / Draft)</td></tr>
+      <tr><td><code>view_count</code></td><td>integer</td><td>Total view count</td></tr>
+      <tr><td><code>published_at</code></td><td>datetime | null</td><td>Publication timestamp</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.3 Season Model</h3>
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>content_id</code></td><td>string</td><td>Reference to parent Content</td></tr>
+      <tr><td><code>number</code></td><td>integer</td><td>Season number (auto-incremented)</td></tr>
+      <tr><td><code>title</code></td><td>string | null</td><td>Optional season title</td></tr>
+      <tr><td><code>description</code></td><td>string | null</td><td>Optional season description</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.4 Episode Model</h3>
+  <table>
+    <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>season_id</code></td><td>string</td><td>Reference to parent Season</td></tr>
+      <tr><td><code>content_id</code></td><td>string</td><td>Reference to parent Content</td></tr>
+      <tr><td><code>number</code></td><td>integer</td><td>Episode number</td></tr>
+      <tr><td><code>title</code></td><td>string</td><td>Episode title</td></tr>
+      <tr><td><code>description</code></td><td>string | null</td><td>Episode description</td></tr>
+      <tr><td><code>duration</code></td><td>integer | null</td><td>Duration in minutes</td></tr>
+      <tr><td><code>thumbnail_url</code></td><td>string | null</td><td>Episode thumbnail image</td></tr>
+      <tr><td><code>video</code></td><td>object</td><td>{ playback_id, status }</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.5 Other Models</h3>
+  <table>
+    <thead><tr><th>Model</th><th>Collection</th><th>Key Fields</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Genre</strong></td><td>genres</td><td>name, slug</td></tr>
+      <tr><td><strong>WatchHistory</strong></td><td>watch_history</td><td>user_id, content_id, episode_id, progress_seconds, duration_seconds, completed</td></tr>
+      <tr><td><strong>Role</strong></td><td>roles</td><td>name (admin, subscriber), guard_name (sanctum)</td></tr>
+      <tr><td><strong>PersonalAccessToken</strong></td><td>personal_access_tokens</td><td>name, token, abilities, expires_at</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ===== 5. API REFERENCE ===== -->
+  <div class="page-break"></div>
+  <h2><span class="section-num">5</span> Backend — API Reference</h2>
+
+  <p>All endpoints are prefixed with <code>/api/v1</code>. Responses follow a consistent JSON structure:</p>
+  <pre><code>{
+  "success": true,
+  "data": { ... },
+  "message": "Optional message"
+}</code></pre>
+
+  <h3>5.1 Authentication <span class="badge badge-green">Public</span></h3>
+  <table>
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-green">POST</span></td><td><code>/api/v1/auth/register</code></td><td>Register new user</td><td>No</td></tr>
+      <tr><td><span class="badge badge-green">POST</span></td><td><code>/api/v1/auth/login</code></td><td>Login and receive API token</td><td>No</td></tr>
+      <tr><td><span class="badge badge-green">POST</span></td><td><code>/api/v1/auth/forgot-password</code></td><td>Send password reset email</td><td>No</td></tr>
+      <tr><td><span class="badge badge-green">POST</span></td><td><code>/api/v1/auth/reset-password</code></td><td>Reset password with token</td><td>No</td></tr>
+      <tr><td><span class="badge badge-amber">POST</span></td><td><code>/api/v1/auth/logout</code></td><td>Revoke current token</td><td>Required</td></tr>
+      <tr><td><span class="badge badge-primary">GET</span></td><td><code>/api/v1/auth/me</code></td><td>Get current user profile</td><td>Required</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.2 Content Browsing <span class="badge badge-green">Public</span></h3>
+  <table>
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Query Params</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-primary">GET</span></td><td><code>/api/v1/content</code></td><td>Browse published content</td><td>type, genre_id, search, page</td></tr>
+      <tr><td><span class="badge badge-primary">GET</span></td><td><code>/api/v1/content/trending</code></td><td>Top viewed content (limit 10)</td><td>—</td></tr>
+      <tr><td><span class="badge badge-primary">GET</span></td><td><code>/api/v1/content/new-releases</code></td><td>Recently published content</td><td>—</td></tr>
+      <tr><td><span class="badge badge-primary">GET</span></td><td><code>/api/v1/content/search</code></td><td>Search content by title</td><td>q</td></tr>
+      <tr><td><span class="badge badge-primary">GET</span></td><td><code>/api/v1/content/{slug}</code></td><td>Content detail by slug</td><td>—</td></tr>
+      <tr><td><span class="badge badge-primary">GET</span></td><td><code>/api/v1/genres</code></td><td>List all genres</td><td>—</td></tr>
+      <tr><td><span class="badge badge-primary">GET</span></td><td><code>/api/v1/content/{slug}/seasons</code></td><td>Seasons for a series</td><td>—</td></tr>
+      <tr><td><span class="badge badge-primary">GET</span></td><td><code>/api/v1/seasons/{id}/episodes</code></td><td>Episodes for a season</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.3 Watch History <span class="badge badge-amber">Auth Required</span></h3>
+  <table>
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-green">POST</span></td><td><code>/api/v1/me/watch-history</code></td><td>Save viewing progress (content_id, episode_id, progress_seconds, duration_seconds)</td></tr>
+      <tr><td><span class="badge badge-primary">GET</span></td><td><code>/api/v1/me/watch-history/{contentId}</code></td><td>Get progress for specific content (optional ?episode_id=)</td></tr>
+      <tr><td><span class="badge badge-primary">GET</span></td><td><code>/api/v1/me/continue-watching</code></td><td>Get incomplete items with content metadata</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.4 Admin — Content Management <span class="badge badge-rose">Admin Only</span></h3>
+  <p>All admin routes require <code>auth:sanctum</code> + <code>role:admin</code> middleware.</p>
+  <table>
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-primary">GET</span></td><td><code>/api/v1/admin/stats</code></td><td>Dashboard statistics (counts, views, recent &amp; top content)</td></tr>
+      <tr><td><span class="badge badge-green">POST</span></td><td><code>/api/v1/admin/upload</code></td><td>Upload image (multipart, max 5MB, jpg/png/webp/avif)</td></tr>
+      <tr><td><span class="badge badge-primary">GET</span></td><td><code>/api/v1/admin/content</code></td><td>List all content (paginated, filterable)</td></tr>
+      <tr><td><span class="badge badge-green">POST</span></td><td><code>/api/v1/admin/content</code></td><td>Create new content</td></tr>
+      <tr><td><span class="badge badge-primary">GET</span></td><td><code>/api/v1/admin/content/{id}</code></td><td>Get content details by ID</td></tr>
+      <tr><td><span class="badge badge-amber">PUT</span></td><td><code>/api/v1/admin/content/{id}</code></td><td>Update content</td></tr>
+      <tr><td><span class="badge badge-violet">PATCH</span></td><td><code>/api/v1/admin/content/{id}/publish</code></td><td>Toggle publish status</td></tr>
+      <tr><td><span class="badge badge-rose">DELETE</span></td><td><code>/api/v1/admin/content/{id}</code></td><td>Delete content (cascades to seasons &amp; episodes)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>5.5 Admin — Seasons &amp; Episodes <span class="badge badge-rose">Admin Only</span></h3>
+  <table>
+    <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-green">POST</span></td><td><code>/api/v1/admin/content/{contentId}/seasons</code></td><td>Create season for content</td></tr>
+      <tr><td><span class="badge badge-primary">GET</span></td><td><code>/api/v1/admin/content/{contentId}/seasons</code></td><td>List seasons for content</td></tr>
+      <tr><td><span class="badge badge-amber">PUT</span></td><td><code>/api/v1/admin/seasons/{id}</code></td><td>Update season</td></tr>
+      <tr><td><span class="badge badge-rose">DELETE</span></td><td><code>/api/v1/admin/seasons/{id}</code></td><td>Delete season</td></tr>
+      <tr><td><span class="badge badge-green">POST</span></td><td><code>/api/v1/admin/seasons/{seasonId}/episodes</code></td><td>Create episode for season</td></tr>
+      <tr><td><span class="badge badge-primary">GET</span></td><td><code>/api/v1/admin/seasons/{seasonId}/episodes</code></td><td>List episodes for season</td></tr>
+      <tr><td><span class="badge badge-amber">PUT</span></td><td><code>/api/v1/admin/episodes/{id}</code></td><td>Update episode</td></tr>
+      <tr><td><span class="badge badge-rose">DELETE</span></td><td><code>/api/v1/admin/episodes/{id}</code></td><td>Delete episode</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ===== 6. SERVICES ===== -->
+  <div class="page-break"></div>
+  <h2><span class="section-num">6</span> Backend — Services &amp; Business Logic</h2>
+
+  <p>Business logic is encapsulated in service classes under <code>app/Services/</code>, keeping controllers thin and testable.</p>
+
+  <h3>6.1 AuthService</h3>
+  <table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>register(array $data)</code></td><td>Creates user with subscriber role, trial subscription, returns API token</td></tr>
+      <tr><td><code>login(array $data)</code></td><td>Validates credentials, checks active status, returns token</td></tr>
+      <tr><td><code>forgotPassword(string $email)</code></td><td>Generates password reset token and sends notification email</td></tr>
+      <tr><td><code>resetPassword(array $data)</code></td><td>Validates reset token and updates user password</td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.2 ContentService</h3>
+  <table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>listAdmin(array $filters)</code></td><td>Paginated content list with search and type filters (all content)</td></tr>
+      <tr><td><code>listPublic(array $filters)</code></td><td>Paginated published-only content with genre, type, and search filters</td></tr>
+      <tr><td><code>trending(int $limit)</code></td><td>Published content ordered by view_count descending</td></tr>
+      <tr><td><code>newReleases(int $limit)</code></td><td>Published content ordered by published_at descending</td></tr>
+      <tr><td><code>store(array $data)</code></td><td>Creates content with auto-generated unique slug and video field normalization</td></tr>
+      <tr><td><code>update(Content, array $data)</code></td><td>Updates content; regenerates slug if title changes</td></tr>
+      <tr><td><code>togglePublish(Content)</code></td><td>Toggles is_published; sets published_at on first publish</td></tr>
+      <tr><td><code>destroy(Content)</code></td><td>Cascading delete of content, all seasons, and all episodes</td></tr>
+      <tr><td><code>stats()</code></td><td>Dashboard analytics: total counts, views, featured, recent and top content</td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.3 WatchHistoryService</h3>
+  <table>
+    <thead><tr><th>Method</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>upsert(User, array $data)</code></td><td>Insert or update watch progress. Marks completed at 90% threshold</td></tr>
+      <tr><td><code>getProgress(User, contentId, episodeId)</code></td><td>Returns saved progress for specific content or episode</td></tr>
+      <tr><td><code>continueWatching(User)</code></td><td>Returns incomplete items with enriched content metadata (batch lookup)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>6.4 SeasonService &amp; EpisodeService</h3>
+  <p>Both provide straightforward <code>store()</code>, <code>update()</code>, and <code>destroy()</code> methods for their respective models. Season numbers are auto-incremented. Episode numbers are managed per-season.</p>
+
+  <!-- ===== 7. FRONTEND PAGES ===== -->
+  <div class="page-break"></div>
+  <h2><span class="section-num">7</span> Frontend — Pages &amp; Routing</h2>
+
+  <h3>7.1 Route Map</h3>
+  <table>
+    <thead><tr><th>Route</th><th>Page Component</th><th>Auth</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>/</code></td><td>HomePage</td><td><span class="badge badge-green">Public</span></td><td>Hero banner, trending, new releases, genre cards</td></tr>
+      <tr><td><code>/browse</code></td><td>BrowsePage</td><td><span class="badge badge-green">Public</span></td><td>Search, filter by genre/type, infinite scroll</td></tr>
+      <tr><td><code>/content/:slug</code></td><td>ContentDetailPage</td><td><span class="badge badge-green">Public</span></td><td>Full content details page</td></tr>
+      <tr><td><code>/watch/:slug</code></td><td>WatchPage</td><td><span class="badge badge-green">Public</span></td><td>Movie video player</td></tr>
+      <tr><td><code>/watch/:slug/episode/:episodeId</code></td><td>WatchPage</td><td><span class="badge badge-green">Public</span></td><td>Episode video player with episode list</td></tr>
+      <tr><td><code>/login</code></td><td>LoginPage</td><td><span class="badge badge-primary">Guest</span></td><td>Admin login form</td></tr>
+      <tr><td><code>/register</code></td><td>RegisterPage</td><td><span class="badge badge-primary">Guest</span></td><td>User registration form</td></tr>
+      <tr><td><code>/admin</code></td><td>AdminDashboard</td><td><span class="badge badge-rose">Admin</span></td><td>Dashboard with stats and analytics</td></tr>
+      <tr><td><code>/admin/content</code></td><td>ContentListPage</td><td><span class="badge badge-rose">Admin</span></td><td>Content management table</td></tr>
+      <tr><td><code>/admin/content/:id</code></td><td>ContentEditPage</td><td><span class="badge badge-rose">Admin</span></td><td>Create or edit content with seasons/episodes</td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.2 Layouts</h3>
+  <table>
+    <thead><tr><th>Layout</th><th>Usage</th><th>Features</th></tr></thead>
+    <tbody>
+      <tr><td><strong>RootLayout</strong></td><td>Wraps all routes</td><td>ContentModal overlay, Toaster (Sonner) notifications</td></tr>
+      <tr><td><strong>MainLayout</strong></td><td>Public pages</td><td>Navigation bar with search, Footer</td></tr>
+      <tr><td><strong>AdminLayout</strong></td><td>Admin panel</td><td>Sidebar navigation, top bar, user profile, sign out</td></tr>
+      <tr><td><strong>AuthLayout</strong></td><td>Login / Register</td><td>Centered form layout with branding</td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.3 Route Guards</h3>
+  <ul class="feature-list">
+    <li><strong>ProtectedRoute</strong> — Checks authentication and optional role. Redirects to <code>/login</code> if unauthorized.</li>
+    <li><strong>GuestRoute</strong> — Redirects authenticated users away from login/register pages.</li>
+  </ul>
+
+  <!-- ===== 8. COMPONENTS ===== -->
+  <div class="page-break"></div>
+  <h2><span class="section-num">8</span> Frontend — Components</h2>
+
+  <h3>8.1 Shared Components</h3>
+  <table>
+    <thead><tr><th>Component</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><strong>HeroBanner</strong></td><td>Full-width featured content header with backdrop image, title, description, and Play / More Info buttons</td></tr>
+      <tr><td><strong>CarouselRow</strong></td><td>Horizontal scrolling content row with left/right navigation arrows and section title</td></tr>
+      <tr><td><strong>ContentCard</strong></td><td>Portrait (2:3) poster card with hover popup (400ms delay), premium gold badge for featured items, progress bar overlay for continue watching</td></tr>
+      <tr><td><strong>HoverPopup</strong></td><td>Expanded card on hover showing metadata: year, rating, duration, language, IMDb score, genre tags</td></tr>
+      <tr><td><strong>ContentModal</strong></td><td>Full detail modal with backdrop image, all metadata, episode list for series, and "More Like This" trending section</td></tr>
+      <tr><td><strong>ContentGrid</strong></td><td>Responsive grid layout for content cards with skeleton loading states</td></tr>
+      <tr><td><strong>GenreCards</strong></td><td>Scrollable row of accent-colored gradient cards with SVG Material Design icons per genre</td></tr>
+      <tr><td><strong>Footer</strong></td><td>4-column footer: Company, View Website, Need Help, Connect with Us. Social icons and app store badges</td></tr>
+    </tbody>
+  </table>
+
+  <h3>8.2 Admin Components</h3>
+  <table>
+    <thead><tr><th>Component</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><strong>ContentForm</strong></td><td>4-section form: Basic Info (title, director, year, duration, rating, language, IMDb, featured toggle), Mux Video (playback ID + preview), Genres &amp; Cast (toggle pills + tag input), Media (file upload for poster 2:3 and backdrop 16:9). Supports jpg/png/webp/avif.</td></tr>
+      <tr><td><strong>SeasonManager</strong></td><td>Auto-numbered season creation with "Add Episode" button on each season header row</td></tr>
+      <tr><td><strong>EpisodeList</strong></td><td>5-column grid: episode badge (#), title, Mux Playback ID, duration, edit/delete action buttons</td></tr>
+    </tbody>
+  </table>
+
+  <h3>8.3 Video Player</h3>
+  <div class="card" style="margin-top:10px;">
+    <div class="card-title">VideoPlayer Component</div>
+    <div class="card-desc">Full-featured HLS video player built with HLS.js (with Safari native HLS fallback):</div>
+    <ul class="feature-list" style="margin-top:6px;">
+      <li>Adaptive quality selection from available HLS levels (auto + manual)</li>
+      <li>Subtitle / text track toggle support</li>
+      <li>Custom controls overlay: play/pause, rewind 10s, forward 10s, current time / duration display</li>
+      <li>Volume slider with mute toggle</li>
+      <li>Picture-in-Picture mode (native browser API)</li>
+      <li>Fullscreen toggle</li>
+      <li>Keyboard shortcuts: Space/K (play/pause), Left/Right arrows (seek 10s), Up/Down (volume), F (fullscreen), M (mute)</li>
+      <li>Auto-hide controls after 3 seconds of mouse inactivity</li>
+      <li>Center play button overlay when video is paused</li>
+      <li>Skip indicator overlay animation on forward/rewind actions</li>
+    </ul>
+  </div>
+
+  <!-- ===== 9. STATE MANAGEMENT ===== -->
+  <div class="page-break"></div>
+  <h2><span class="section-num">9</span> Frontend — State Management</h2>
+
+  <h3>9.1 Zustand Stores</h3>
+
+  <h4>authStore</h4>
+  <table>
+    <thead><tr><th>Property / Method</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>user</code></td><td>User | null</td><td>Current authenticated user object</td></tr>
+      <tr><td><code>token</code></td><td>string | null</td><td>Sanctum API bearer token</td></tr>
+      <tr><td><code>isAuthenticated</code></td><td>boolean</td><td>Derived authentication state</td></tr>
+      <tr><td><code>setAuth(user, token)</code></td><td>function</td><td>Set auth state and persist to localStorage</td></tr>
+      <tr><td><code>clearAuth()</code></td><td>function</td><td>Clear auth state and remove from localStorage</td></tr>
+      <tr><td><code>isAdmin()</code></td><td>function</td><td>Check if user has admin role</td></tr>
+      <tr><td><code>hasActiveSubscription()</code></td><td>function</td><td>Check if subscription is trial or active</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Persistence:</strong> localStorage key <code>midflix-auth</code></p>
+
+  <h4>modalStore</h4>
+  <table>
+    <thead><tr><th>Property / Method</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>slug</code></td><td>string | null</td><td>Content slug to display in modal</td></tr>
+      <tr><td><code>isOpen</code></td><td>boolean</td><td>Modal visibility state</td></tr>
+      <tr><td><code>openContentModal(slug)</code></td><td>function</td><td>Open modal for specific content</td></tr>
+      <tr><td><code>closeContentModal()</code></td><td>function</td><td>Close modal and reset slug</td></tr>
+    </tbody>
+  </table>
+
+  <h3>9.2 Server State — TanStack Query v5</h3>
+  <p>All API data is managed through TanStack Query with automatic caching, background refetching, and deduplication. Key query keys used throughout the application:</p>
+  <table>
+    <thead><tr><th>Query Key</th><th>Used In</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>['content', slug]</code></td><td>ContentDetailPage, WatchPage</td><td>Single content detail by slug</td></tr>
+      <tr><td><code>['trending']</code></td><td>HomePage, ContentModal</td><td>Trending content list</td></tr>
+      <tr><td><code>['new-releases']</code></td><td>HomePage</td><td>New releases list</td></tr>
+      <tr><td><code>['browse-content', filters]</code></td><td>BrowsePage</td><td>Infinite scroll browse results</td></tr>
+      <tr><td><code>['genres']</code></td><td>HomePage, BrowsePage, ContentForm</td><td>All genres list</td></tr>
+      <tr><td><code>['continue-watching']</code></td><td>HomePage</td><td>User's incomplete watch items</td></tr>
+      <tr><td><code>['watch-history', id, epId]</code></td><td>WatchPage</td><td>Playback resume position</td></tr>
+      <tr><td><code>['admin-content', search, page]</code></td><td>ContentListPage</td><td>Admin content table</td></tr>
+      <tr><td><code>['admin-stats']</code></td><td>AdminDashboard</td><td>Dashboard statistics</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ===== 10. AUTH ===== -->
+  <div class="page-break"></div>
+  <h2><span class="section-num">10</span> Authentication &amp; Authorization</h2>
+
+  <h3>10.1 Authentication Flow</h3>
+  <div class="arch-diagram">
+    <div class="arch-row"><div class="arch-box arch-blue">User submits login form</div></div>
+    <div class="arch-arrow">&darr;</div>
+    <div class="arch-row"><div class="arch-box arch-violet">POST /api/v1/auth/login</div></div>
+    <div class="arch-arrow">&darr;</div>
+    <div class="arch-row"><div class="arch-box arch-green">AuthService validates credentials</div></div>
+    <div class="arch-arrow">&darr;</div>
+    <div class="arch-row"><div class="arch-box arch-amber">Sanctum creates personal access token</div></div>
+    <div class="arch-arrow">&darr;</div>
+    <div class="arch-row"><div class="arch-box arch-cyan">Token stored in localStorage (midflix-auth)</div></div>
+    <div class="arch-arrow">&darr;</div>
+    <div class="arch-row"><div class="arch-box arch-blue">Axios interceptor adds Authorization: Bearer header</div></div>
+  </div>
+
+  <h3>10.2 Role-Based Access Control</h3>
+  <table>
+    <thead><tr><th>Role</th><th>Capabilities</th><th>Protected By</th></tr></thead>
+    <tbody>
+      <tr><td><span class="badge badge-rose">admin</span></td><td>Full content CRUD, image upload, stats, season/episode management</td><td><code>auth:sanctum</code> + <code>role:admin</code> middleware</td></tr>
+      <tr><td><span class="badge badge-primary">subscriber</span></td><td>Save/retrieve watch history, continue watching list</td><td><code>auth:sanctum</code> middleware</td></tr>
+      <tr><td><span class="badge badge-green">anonymous</span></td><td>Browse, search, view details, watch all content</td><td>No middleware — fully public</td></tr>
+    </tbody>
+  </table>
+
+  <h3>10.3 Axios Interceptors</h3>
+  <ul class="feature-list">
+    <li><strong>Request interceptor:</strong> Automatically adds <code>Authorization: Bearer {token}</code> from localStorage to every outgoing API request.</li>
+    <li><strong>Response interceptor:</strong> On 401 errors, only redirects to <code>/login</code> if the user is on an <code>/admin</code> page — public browsing is never disrupted by auth errors.</li>
+  </ul>
+
+  <!-- ===== 11. VIDEO ===== -->
+  <h2><span class="section-num">11</span> Video Streaming &amp; Playback</h2>
+
+  <h3>11.1 Mux Integration</h3>
+  <p>Video content is hosted on <strong>Mux</strong>. Each content or episode stores a <code>playback_id</code> used to derive streaming and thumbnail URLs:</p>
+  <pre><code>// HLS streaming URL
+https://stream.mux.com/{playback_id}.m3u8
+
+// Thumbnail image URL
+https://image.mux.com/{playback_id}/thumbnail.jpg</code></pre>
+
+  <h3>11.2 Watch History Tracking</h3>
+  <table>
+    <thead><tr><th>Trigger</th><th>Behavior</th></tr></thead>
+    <tbody>
+      <tr><td>Every 15 seconds</td><td>Auto-save progress via React Query mutation (throttled by ref timestamp)</td></tr>
+      <tr><td>On video pause</td><td>Force-save current position immediately</td></tr>
+      <tr><td>On video ended</td><td>Save progress = duration. Auto-navigate to next episode if series.</td></tr>
+      <tr><td>On page unload</td><td><code>beforeunload</code> handler uses <code>fetch</code> with <code>keepalive: true</code> for reliable delivery</td></tr>
+    </tbody>
+  </table>
+
+  <div class="info-box">
+    <strong>Completion threshold:</strong> A video is marked "completed" when the viewer reaches 90% of the total duration. Completed items are excluded from the "Continue Watching" carousel on the homepage.
+  </div>
+
+  <!-- ===== 12. DOCKER ===== -->
+  <div class="page-break"></div>
+  <h2><span class="section-num">12</span> Docker &amp; Deployment</h2>
+
+  <h3>12.1 Docker Compose Services</h3>
+  <table>
+    <thead><tr><th>Service</th><th>Image</th><th>Port</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><strong>app</strong></td><td>PHP 8.3-FPM (custom Dockerfile)</td><td>9000</td><td>Laravel API backend (PHP-FPM)</td></tr>
+      <tr><td><strong>nginx</strong></td><td>nginx:alpine</td><td>8000 &rarr; 80</td><td>Web server and reverse proxy</td></tr>
+      <tr><td><strong>mongodb</strong></td><td>mongo:7</td><td>27017</td><td>Primary NoSQL database</td></tr>
+      <tr><td><strong>redis</strong></td><td>redis:7-alpine</td><td>6379</td><td>Cache, sessions, and queue backend</td></tr>
+      <tr><td><strong>horizon</strong></td><td>PHP 8.3-FPM (custom)</td><td>—</td><td>Laravel Horizon queue worker and monitor</td></tr>
+    </tbody>
+  </table>
+
+  <h3>12.2 Persistent Volumes</h3>
+  <ul class="feature-list">
+    <li><code>mongodb_data</code> — Persistent MongoDB database files</li>
+    <li><code>redis_data</code> — Persistent Redis data</li>
+    <li><code>./backend</code> — Code mount for app and horizon containers (development)</li>
+  </ul>
+
+  <h3>12.3 Networking</h3>
+  <p>All services run on a shared <code>midflix</code> bridge network, enabling inter-service communication via service names (e.g., <code>mongodb:27017</code>, <code>redis:6379</code>, <code>app:9000</code>).</p>
+
+  <!-- ===== 13. ENV CONFIG ===== -->
+  <h2><span class="section-num">13</span> Environment Configuration</h2>
+
+  <h3>13.1 Backend Environment Variables</h3>
+  <table>
+    <thead><tr><th>Variable</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>APP_NAME</code></td><td>MidFlix</td><td>Application display name</td></tr>
+      <tr><td><code>APP_ENV</code></td><td>local</td><td>Environment (local / production)</td></tr>
+      <tr><td><code>APP_URL</code></td><td>http://localhost:8000</td><td>Backend base URL</td></tr>
+      <tr><td><code>DB_CONNECTION</code></td><td>mongodb</td><td>Database driver</td></tr>
+      <tr><td><code>MONGODB_URI</code></td><td>mongodb://localhost:27017</td><td>MongoDB connection string</td></tr>
+      <tr><td><code>MONGODB_DATABASE</code></td><td>midflix</td><td>Database name</td></tr>
+      <tr><td><code>REDIS_HOST</code></td><td>127.0.0.1</td><td>Redis server host</td></tr>
+      <tr><td><code>REDIS_PORT</code></td><td>6379</td><td>Redis server port</td></tr>
+      <tr><td><code>SANCTUM_STATEFUL_DOMAINS</code></td><td>localhost:5173</td><td>Allowed SPA origins for cookie-based auth</td></tr>
+      <tr><td><code>ADMIN_SEED_PASSWORD</code></td><td>admin123456</td><td>Default admin password used by database seeder</td></tr>
+      <tr><td><code>MAIL_MAILER</code></td><td>log</td><td>Email driver (log for development)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>13.2 Frontend Environment Variables</h3>
+  <table>
+    <thead><tr><th>Variable</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>VITE_API_BASE_URL</code></td><td>(empty string)</td><td>API base URL. Empty string uses Vite dev proxy in development. Set to backend URL in production.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ===== 14. GETTING STARTED ===== -->
+  <div class="page-break"></div>
+  <h2><span class="section-num">14</span> Getting Started</h2>
+
+  <h3>14.1 Prerequisites</h3>
+  <ul class="feature-list">
+    <li>Docker and Docker Compose installed</li>
+    <li>Node.js 22 (via NVM) for frontend development</li>
+    <li>PHP 8.2+ and Composer (if running backend outside Docker)</li>
+  </ul>
+
+  <h3>14.2 Quick Start</h3>
+  <pre><code># Clone the repository
+git clone &lt;repository-url&gt;
+cd MidFlix
+
+# Start all backend services
+docker-compose up -d
+
+# Run database migrations and seed default data
+docker-compose exec app php artisan migrate --seed
+
+# Start the frontend development server
+cd frontend
+nvm use 22
+npm install
+npm run dev</code></pre>
+
+  <h3>14.3 Access Points</h3>
+  <table>
+    <thead><tr><th>Service</th><th>URL</th></tr></thead>
+    <tbody>
+      <tr><td>Frontend (Vite dev server)</td><td><code>http://localhost:5173</code></td></tr>
+      <tr><td>Backend API</td><td><code>http://localhost:8000/api/v1</code></td></tr>
+      <tr><td>Admin Panel</td><td><code>http://localhost:5173/admin</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>14.4 Default Admin Credentials</h3>
+  <div class="info-box">
+    <strong>Email:</strong> admin@midflix.com<br>
+    <strong>Password:</strong> admin123456<br>
+    <small>(Configurable via the <code>ADMIN_SEED_PASSWORD</code> environment variable before running the seeder)</small>
+  </div>
+
+  <h3>14.5 Running Tests</h3>
+  <pre><code># Backend tests using Pest PHP
+cd backend
+php artisan test
+
+# Or run tests via Docker
+docker-compose exec app php artisan test</code></pre>
+
+  <h3>14.6 Building for Production</h3>
+  <pre><code># Build frontend assets
+cd frontend
+npm run build
+
+# The build output goes to frontend/dist/
+# Serve via Nginx or copy into backend's public/ directory</code></pre>
+
+  <div class="divider"></div>
+
+  <div class="page-footer">
+    <p>&copy; 2026 MidFlix — Technical Documentation v1.0.0</p>
+    <p style="margin-top:4px;">Generated on March 30, 2026</p>
+  </div>
+</div>
+
+</body>
+</html>

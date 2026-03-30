@@ -115,6 +115,7 @@ function ContinueWatchingRow({ items }: ContinueWatchingRowProps) {
               genre_ids: [],
               is_published: true,
               is_featured: false,
+              language: null,
               view_count: 0,
               video: null,
               published_at: null,

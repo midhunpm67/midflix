@@ -51,6 +51,7 @@ Route::prefix('v1')->group(function () {
     });
 
     // Public browse routes — no auth required
+    Route::get('/languages', [\App\Http\Controllers\Api\V1\ContentController::class, 'languages']);
     Route::get('/genres', [\App\Http\Controllers\Api\V1\GenreController::class, 'index']);
     Route::get('/content/{slug}/seasons', [\App\Http\Controllers\Api\V1\PublicBrowseController::class, 'seasons']);
     Route::get('/seasons/{id}/episodes', [\App\Http\Controllers\Api\V1\PublicBrowseController::class, 'episodes']);

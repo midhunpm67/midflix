@@ -16,7 +16,7 @@ class ContentController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $paginator = $this->contentService->listPublic($request->only(['type', 'genre_id']));
+        $paginator = $this->contentService->listPublic($request->only(['type', 'genre_id', 'language']));
 
         return response()->json([
             'success' => true,
@@ -63,6 +63,14 @@ class ContentController extends Controller
                 'current_page' => $paginator->currentPage(),
                 'last_page'    => $paginator->lastPage(),
             ],
+        ]);
+    }
+
+    public function languages(): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'data'    => $this->contentService->languages(),
         ]);
     }
 

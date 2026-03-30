@@ -37,11 +37,29 @@ class ContentService
             $query->where('genre_ids', $filters['genre_id']);
         }
 
+        if (!empty($filters['language'])) {
+            $query->where('language', $filters['language']);
+        }
+
         if (!empty($filters['search'])) {
             $query->where('title', 'like', '%' . preg_quote($filters['search'], '/') . '%');
         }
 
         return $query->orderBy('created_at', 'desc')->paginate(20);
+    }
+
+    public function languages(): array
+    {
+        $languages = Content::raw(function ($collection) {
+            return $collection->distinct('language', [
+                'is_published' => true,
+                'language' => ['$ne' => null],
+            ]);
+        });
+
+        sort($languages);
+
+        return $languages;
     }
 
     public function trending(int $limit = 10): \Illuminate\Database\Eloquent\Collection

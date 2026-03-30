@@ -4,6 +4,7 @@ import type { Content, ContentListItem, ContentType, Genre, PaginatedResponse, S
 export async function browseContent(params?: {
   type?: ContentType;
   genre_id?: string;
+  language?: string;
   page?: number;
 }): Promise<PaginatedResponse<ContentListItem>> {
   const res = await apiClient.get('/api/v1/content', { params });
@@ -42,5 +43,10 @@ export async function getSeasonEpisodes(seasonId: string): Promise<Episode[]> {
 
 export async function getGenres(): Promise<Genre[]> {
   const res = await apiClient.get('/api/v1/genres');
+  return res.data.data;
+}
+
+export async function getLanguages(): Promise<string[]> {
+  const res = await apiClient.get('/api/v1/languages');
   return res.data.data;
 }
