@@ -280,7 +280,7 @@ export default function ContentForm({
             <input
               ref={posterInputRef}
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/webp,image/avif"
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0];
@@ -319,7 +319,7 @@ export default function ContentForm({
             <input
               ref={backdropInputRef}
               type="file"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/webp,image/avif"
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0];

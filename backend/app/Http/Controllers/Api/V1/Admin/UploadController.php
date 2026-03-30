@@ -11,7 +11,7 @@ class UploadController extends Controller
     public function store(Request $request): JsonResponse
     {
         $request->validate([
-            'file' => ['required', 'image', 'max:5120'],
+            'file' => ['required', 'file', 'mimes:jpg,jpeg,png,webp,avif', 'max:5120'],
             'type' => ['sometimes', 'in:poster,backdrop'],
         ]);
 
