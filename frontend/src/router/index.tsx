@@ -7,15 +7,13 @@ import { MainLayout } from '@/layouts/MainLayout'
 import { AdminLayout } from '@/layouts/AdminLayout'
 import { LoginPage } from '@/pages/auth/LoginPage'
 import { RegisterPage } from '@/pages/auth/RegisterPage'
+import AdminDashboard from '@/pages/admin/AdminDashboard'
 import ContentListPage from '@/pages/admin/ContentListPage'
 import ContentEditPage from '@/pages/admin/ContentEditPage'
 import HomePage from '@/pages/HomePage'
 import ContentDetailPage from '@/pages/ContentDetailPage'
 import WatchPage from '@/pages/WatchPage'
 import BrowsePage from '@/pages/BrowsePage'
-
-// Placeholder pages
-const AdminDashboard = () => <div className="p-8 text-white">Admin Dashboard</div>
 
 export const router = createBrowserRouter([
   {

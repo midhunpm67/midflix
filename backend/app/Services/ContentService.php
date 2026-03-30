@@ -110,13 +110,34 @@ class ContentService
     {
         $total = Content::count();
         $published = Content::where('is_published', true)->count();
+        $featured = Content::where('is_featured', true)->count();
+        $totalViews = (int) Content::sum('view_count');
+        $totalSeasons = Season::count();
+        $totalEpisodes = Episode::count();
+        $videosReady = Content::where('video.status', 'ready')->count();
+
+        $recentContent = Content::orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get(['title', 'slug', 'type', 'is_published', 'view_count', 'poster_url', 'created_at']);
+
+        $topContent = Content::where('is_published', true)
+            ->orderBy('view_count', 'desc')
+            ->limit(5)
+            ->get(['title', 'slug', 'type', 'view_count', 'poster_url']);
 
         return [
-            'total_content' => $total,
-            'published'     => $published,
-            'unpublished'   => $total - $published,
-            'movies'        => Content::where('type', 'movie')->count(),
-            'series'        => Content::where('type', 'series')->count(),
+            'total_content'  => $total,
+            'published'      => $published,
+            'unpublished'    => $total - $published,
+            'movies'         => Content::where('type', 'movie')->count(),
+            'series'         => Content::where('type', 'series')->count(),
+            'featured'       => $featured,
+            'total_views'    => $totalViews,
+            'total_seasons'  => $totalSeasons,
+            'total_episodes' => $totalEpisodes,
+            'videos_ready'   => $videosReady,
+            'recent_content' => $recentContent,
+            'top_content'    => $topContent,
         ];
     }
 

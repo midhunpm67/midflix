@@ -113,12 +113,29 @@ export interface CreateEpisodePayload {
 
 export type UpdateEpisodePayload = Partial<CreateEpisodePayload>;
 
+export interface AdminStatsContentItem {
+  title: string;
+  slug: string;
+  type: ContentType;
+  is_published?: boolean;
+  view_count: number;
+  poster_url: string | null;
+  created_at?: string;
+}
+
 export interface AdminStats {
   total_content: number;
   published: number;
   unpublished: number;
   movies: number;
   series: number;
+  featured: number;
+  total_views: number;
+  total_seasons: number;
+  total_episodes: number;
+  videos_ready: number;
+  recent_content: AdminStatsContentItem[];
+  top_content: AdminStatsContentItem[];
 }
 
 export interface WatchHistoryItem {
